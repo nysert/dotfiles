@@ -12,12 +12,13 @@ set shiftwidth=2
 set autoindent
 set smartindent
 
-" add (), {}, [], "", ''  autocompletion
+" add (), {}, [], "", '', <%%>  autocompletion
 inoremap ( ()<ESC>ha
 inoremap { {}<ESC>ha
 inoremap [ []<ESC>ha
 inoremap " ""<ESC>ha
 inoremap ' ''<ESC>ha
+inoremap <% <%%><ESC>2ha
 
 set background=dark
 colorscheme hybrid_material
