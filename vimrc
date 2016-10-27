@@ -12,10 +12,12 @@ set shiftwidth=2
 set autoindent
 set smartindent
 
-" add brackets, curly brackets and square brackets autocompletion
+" add (), {}, [], "", ''  autocompletion
 inoremap ( ()<ESC>ha
 inoremap { {}<ESC>ha
 inoremap [ []<ESC>ha
+inoremap " ""<ESC>ha
+inoremap ' ''<ESC>ha
 
 set background=dark
 colorscheme hybrid_material
