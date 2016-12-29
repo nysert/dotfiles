@@ -11,6 +11,9 @@ set tabstop=2
 set shiftwidth=2
 set autoindent
 set smartindent
+set term=screen-256color
+set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
+set list
 
 " add (), {}, [], "", '', <%%>  autocompletion
 inoremap ( ()<ESC>ha
@@ -54,3 +57,9 @@ let g:multi_cursor_next_key='<C-n>'
 let g:multi_cursor_prev_key='<C-p>'
 let g:multi_cursor_skip_key='<C-x>'
 let g:multi_cursor_quit_key='<Esc>'
+
+" NERDCommenter
+filetype plugin on
+
+" winresizer
+let g:winresizer_start_key = '<C-E>'
