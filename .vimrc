@@ -62,4 +62,4 @@ let g:multi_cursor_quit_key='<Esc>'
 filetype plugin on
 
 " winresizer
-let g:winresizer_start_key = '<C-E>'
+let g:winresizer_start_key = '<C-x>'
