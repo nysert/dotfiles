@@ -23,6 +23,11 @@ inoremap " ""<ESC>ha
 inoremap ' ''<ESC>ha
 inoremap <% <%%><ESC>2ha
 
+" paste togle visual
+nnoremap <F2> :set invpaste paste?<CR>
+set pastetoggle=<F2>
+set showmode
+
 set background=dark
 colorscheme hybrid_material
 
@@ -33,6 +38,7 @@ let g:airline#extensions#hunks#enabled=0
 
 " Keybinds
 :command Ffc FufCoverageFile 
+nmap <C-f> :FufCoverageFile<CR>
 
 " enable line numbers
 let NERDTreeShowLineNumbers=1
