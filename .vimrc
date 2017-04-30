@@ -1,4 +1,28 @@
-execute pathogen#infect()
+set nocompatible
+filetype off
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'vim-scripts/FuzzyFinder'
+Plugin 'vim-scripts/L9'
+Plugin 'slashmili/alchemist.vim'
+Plugin 'mattn/emmet-vim'
+Plugin 'yggdroot/indentline'
+Plugin 'aluriak/nerdcommenter'
+Plugin 'vim-airline/vim-airline'
+Plugin 'elixir-lang/vim-elixir'
+Plugin 'tpope/vim-fugitive'
+Plugin 'kristijanhusak/vim-hybrid-material'
+Plugin 'terryma/vim-multiple-cursors'
+Plugin 'simeji/winresizer'
+Bundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
 
 set number
 syntax on
