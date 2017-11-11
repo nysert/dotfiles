@@ -10,14 +10,15 @@ Plugin 'vim-scripts/FuzzyFinder'
 Plugin 'vim-scripts/L9'
 Plugin 'slashmili/alchemist.vim'
 Plugin 'mattn/emmet-vim'
-Plugin 'yggdroot/indentline'
 Plugin 'aluriak/nerdcommenter'
 Plugin 'vim-airline/vim-airline'
 Plugin 'elixir-lang/vim-elixir'
-Plugin 'tpope/vim-fugitive'
-Plugin 'kristijanhusak/vim-hybrid-material'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'simeji/winresizer'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'kristijanhusak/vim-hybrid-material'
+Plugin 'fatih/vim-go'
+Plugin 'wakatime/vim-wakatime'
 Bundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 
 " All of your Plugins must be added before the following line
@@ -28,7 +29,6 @@ set number
 syntax on
 set encoding=utf-8
 set guifont=Source\ Code\ Pro\ for\ Powerline
-" autocmd BufEnter * lcd %:p:h
 set backspace=2
 set expandtab
 set tabstop=2
@@ -38,8 +38,21 @@ set smartindent
 set term=screen-256color
 set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 set list
+set background=dark
+colorscheme hybrid_material
+set colorcolumn=100
+set relativenumber 
+:highlight LineNr ctermfg=grey
 
-" add (), {}, [], "", '', <%%>  autocompletion
+:command W w
+
+" Normal Mode
+nnoremap <C-e> 5<C-e>
+nnoremap <C-y> 5<C-y>
+nnoremap <C-h> gT
+nnoremap <C-l> gt
+
+" Insert Mode
 inoremap ( ()<ESC>ha
 inoremap { {}<ESC>ha
 inoremap [ []<ESC>ha
@@ -52,33 +65,23 @@ nnoremap <F2> :set invpaste paste?<CR>
 set pastetoggle=<F2>
 set showmode
 
-set background=dark
-colorscheme hybrid_material
-
-" vim-airline config
+" vim-airline
 set laststatus=2
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#hunks#enabled=0
+let g:airline_section_z = '%{strftime("%H:%M %d/%b/%y")}'
 
-" Keybinds
+" FuzzyFinder
 :command Ffc FufCoverageFile 
 nmap <C-f> :FufCoverageFile<CR>
+let g:fuf_modesDisable = [ 'mrufile', 'mrucmd', 'file', 'dir', 'buffer', 'bookmarkfile', 'bookmarkdir', 'buffertag', 'taggedfile', 'jumplist', 'changelist', 'quickfix', 'line', 'help', 'tags' ]
+let g:fuf_file_exclude = '\vtmp|node_modules|\~$|\.(o|exe|dll|bak|orig|swp|jpg|png|gif)$|(^|[/\\])\.(hg|git|bzr)($|[/\\])'
+let g:fuf_coveragefile_exclude = '\vtmp|node_modules|\~$|\.(o|exe|dll|bak|orig|swp|jpg|png|gif)$|(^|[/\\])\.(hg|git|bzr)($|[/\\])'
+let g:fuf_dir_exclude = '\vtmp|node_modules|*tmp-mixture.*'
 
-" enable line numbers
+" NERDTree
 let NERDTreeShowLineNumbers=1
-" make sure relative line numbers are used
 autocmd FileType nerdtree setlocal relativenumber
-
-" set relative and line number together
-set relativenumber 
-:highlight LineNr ctermfg=grey   
-
-" indentline
-let g:indentLine_char='|'
-"let g:indentLine_leadingSpaceChar = '.'
-"let g:indentLine_leadingSpaceEnabled = 1 
-
-" NEERDTree 
 let NERDTreeShowHidden=1
 
 " vim-multiple-cursors
@@ -93,3 +96,13 @@ filetype plugin on
 
 " winresizer
 let g:winresizer_start_key = '<C-x>'
+
+" gitgutter
+autocmd VimEnter :GitGutterDisable wincmd l
+nmap <C-g> :GitGutterToggle<CR>
+
+let g:user_emmet_settings = {
+\  'javascript' : {
+\      'extends' : 'jsx',
+\  },
+\}
