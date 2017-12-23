@@ -6,7 +6,6 @@ call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
-Plugin 'vim-scripts/FuzzyFinder'
 Plugin 'vim-scripts/L9'
 Plugin 'slashmili/alchemist.vim'
 Plugin 'mattn/emmet-vim'
@@ -19,6 +18,7 @@ Plugin 'airblade/vim-gitgutter'
 Plugin 'kristijanhusak/vim-hybrid-material'
 Plugin 'fatih/vim-go'
 Plugin 'wakatime/vim-wakatime'
+Plugin 'kien/ctrlp.vim'
 Bundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 
 " All of your Plugins must be added before the following line
@@ -44,7 +44,8 @@ set colorcolumn=100
 set relativenumber 
 :highlight LineNr ctermfg=grey
 
-:command W w
+
+command W w
 
 " Normal Mode
 nnoremap <C-e> 5<C-e>
@@ -71,18 +72,18 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#hunks#enabled=0
 let g:airline_section_z = '%{strftime("%H:%M %d/%b/%y")}'
 
-" FuzzyFinder
-:command Ffc FufCoverageFile 
-nmap <C-f> :FufCoverageFile<CR>
-let g:fuf_modesDisable = [ 'mrufile', 'mrucmd', 'file', 'dir', 'buffer', 'bookmarkfile', 'bookmarkdir', 'buffertag', 'taggedfile', 'jumplist', 'changelist', 'quickfix', 'line', 'help', 'tags' ]
-let g:fuf_file_exclude = '\vtmp|node_modules|\~$|\.(o|exe|dll|bak|orig|swp|jpg|png|gif)$|(^|[/\\])\.(hg|git|bzr)($|[/\\])'
-let g:fuf_coveragefile_exclude = '\vtmp|node_modules|\~$|\.(o|exe|dll|bak|orig|swp|jpg|png|gif)$|(^|[/\\])\.(hg|git|bzr)($|[/\\])'
-let g:fuf_dir_exclude = '\vtmp|node_modules|*tmp-mixture.*'
+" ctrlp.vim
+let g:ctrlp_map = '<c-f>'
+let g:ctrlp_custom_ignore = 'node_modules\|deps\|_build\|vendor\'
+let g:ctrlp_prompt_mappings = {
+\  'PrtClearCache()': ['<c-r>'],
+\}
 
 " NERDTree
-let NERDTreeShowLineNumbers=1
 autocmd FileType nerdtree setlocal relativenumber
-let NERDTreeShowHidden=1
+let NERDTreeShowLineNumbers = 1
+let NERDTreeShowHidden = 1
+let NERDTreeIgnore = ['node_modules$[[dir]]']
 
 " vim-multiple-cursors
 let g:multi_cursor_use_default_mapping=0
