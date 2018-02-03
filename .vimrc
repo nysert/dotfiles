@@ -11,15 +11,13 @@ Plugin 'slashmili/alchemist.vim'
 Plugin 'mattn/emmet-vim'
 Plugin 'aluriak/nerdcommenter'
 Plugin 'vim-airline/vim-airline'
-Plugin 'elixir-lang/vim-elixir'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'simeji/winresizer'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'kristijanhusak/vim-hybrid-material'
 Plugin 'fatih/vim-go'
-Plugin 'wakatime/vim-wakatime'
 Plugin 'kien/ctrlp.vim'
-Bundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plugin 'elixir-editors/vim-elixir'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -50,6 +48,8 @@ command W w
 " Normal Mode
 nnoremap <C-e> 5<C-e>
 nnoremap <C-y> 5<C-y>
+nnoremap <C-j> 5j
+nnoremap <C-k> 5k
 nnoremap <C-h> gT
 nnoremap <C-l> gt
 
@@ -65,12 +65,6 @@ inoremap <% <%%><ESC>2ha
 nnoremap <F2> :set invpaste paste?<CR>
 set pastetoggle=<F2>
 set showmode
-
-" vim-airline
-set laststatus=2
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#hunks#enabled=0
-let g:airline_section_z = '%{strftime("%H:%M %d/%b/%y")}'
 
 " ctrlp.vim
 let g:ctrlp_map = '<c-f>'
@@ -101,6 +95,11 @@ let g:winresizer_start_key = '<C-x>'
 " gitgutter
 autocmd VimEnter :GitGutterDisable wincmd l
 nmap <C-g> :GitGutterToggle<CR>
+
+" vim-airline
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#hunks#enabled=0
+let g:airline_section_z = '%{strftime("%H:%M %d/%b/%y")}'
 
 let g:user_emmet_settings = {
 \  'javascript' : {
