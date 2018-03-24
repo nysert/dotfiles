@@ -101,7 +101,7 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#hunks#enabled=0
 let g:airline_section_z = '%{strftime("%H:%M %d/%b/%y")}'
 
-let g:user_emmet_mode='i'
+let g:user_emmet_mode='iv'
 let g:user_emmet_settings = {
 \  'javascript' : {
 \      'extends' : 'jsx',
