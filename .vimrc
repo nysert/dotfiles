@@ -17,7 +17,8 @@ Plugin 'airblade/vim-gitgutter'
 Plugin 'kristijanhusak/vim-hybrid-material'
 Plugin 'fatih/vim-go'
 Plugin 'kien/ctrlp.vim'
-Plugin 'elixir-editors/vim-elixir'
+Plugin 'wakatime/vim-wakatime'
+Plugin 'sheerun/vim-polyglot'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -33,15 +34,14 @@ set tabstop=2
 set shiftwidth=2
 set autoindent
 set smartindent
-set term=screen-256color
 set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 set list
 set background=dark
 colorscheme hybrid_material
 set colorcolumn=100
-set relativenumber 
+set relativenumber
+set nohlsearch
 :highlight LineNr ctermfg=grey
-
 
 command W w
 
@@ -52,6 +52,7 @@ nnoremap <C-j> 5j
 nnoremap <C-k> 5k
 nnoremap <C-h> gT
 nnoremap <C-l> gt
+nnoremap <silent> <leader>bv :vnew<CR>
 
 " Insert Mode
 inoremap ( ()<ESC>ha
@@ -68,7 +69,7 @@ set showmode
 
 " ctrlp.vim
 let g:ctrlp_map = '<c-f>'
-let g:ctrlp_custom_ignore = 'node_modules\|deps\|_build\|vendor\'
+let g:ctrlp_custom_ignore = 'node_modules\|deps\|cache\|_build\|vendor\'
 let g:ctrlp_prompt_mappings = {
 \  'PrtClearCache()': ['<c-r>'],
 \}
@@ -103,7 +104,8 @@ let g:airline_section_z = '%{strftime("%H:%M %d/%b/%y")}'
 
 let g:user_emmet_mode='iv'
 let g:user_emmet_settings = {
-\  'javascript' : {
+\  'javascript.jsx' : {
 \      'extends' : 'jsx',
+\      'quote_char': "'",
 \  },
 \}
