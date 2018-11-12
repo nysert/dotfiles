@@ -69,7 +69,7 @@ set showmode
 
 " ctrlp.vim
 let g:ctrlp_map = '<c-f>'
-let g:ctrlp_custom_ignore = 'node_modules\|deps\|cache\|_build\|vendor\'
+let g:ctrlp_custom_ignore = 'node_modules\|build\|ios/Pods\|ios/Index\|*.xcodeproj\|.xcworkspace\|deps\|cache\|_build\|vendor\'
 let g:ctrlp_prompt_mappings = {
 \  'PrtClearCache()': ['<c-r>'],
 \}
@@ -102,6 +102,7 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#hunks#enabled=0
 let g:airline_section_z = '%{strftime("%H:%M %d/%b/%y")}'
 
+" emmet-vim
 let g:user_emmet_mode='iv'
 let g:user_emmet_settings = {
 \  'javascript.jsx' : {
