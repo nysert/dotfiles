@@ -39,7 +39,6 @@ set background=dark
 colorscheme hybrid_material
 set colorcolumn=100
 set relativenumber
-set nohlsearch
 :highlight LineNr ctermfg=grey
 
 command W w
@@ -52,6 +51,7 @@ nnoremap <C-k> 5k
 nnoremap <C-h> gT
 nnoremap <C-l> gt
 nnoremap <silent> <leader>bv :vnew<CR>
+nnoremap <C-n> :nohls<CR>
 
 " Insert Mode
 inoremap ( ()<ESC>ha
