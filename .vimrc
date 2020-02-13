@@ -18,6 +18,8 @@ Plugin 'fatih/vim-go'
 Plugin 'kien/ctrlp.vim'
 Plugin 'wakatime/vim-wakatime'
 Plugin 'sheerun/vim-polyglot'
+Plugin 'terryma/vim-multiple-cursors'
+Plugin 'jremmen/vim-ripgrep'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -37,6 +39,7 @@ set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 set list
 set background=dark
 colorscheme hybrid_material
+set nohlsearch
 set colorcolumn=100
 set relativenumber
 :highlight LineNr ctermfg=grey
@@ -68,7 +71,7 @@ set showmode
 
 " ctrlp.vim
 let g:ctrlp_map = '<c-f>'
-let g:ctrlp_custom_ignore = 'node_modules\|build\|ios/Pods\|ios/Index\|*.xcodeproj\|.xcworkspace\|deps\|cache\|_build\|vendor\'
+let g:ctrlp_custom_ignore = 'node_modules\|build\|ios/Pods\|ios/Index\|*.xcodeproj\|.xcworkspace\|deps\|cache\|bundle\|_build\|vendor'
 let g:ctrlp_prompt_mappings = {
 \  'PrtClearCache()': ['<c-r>'],
 \}
