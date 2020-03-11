@@ -72,6 +72,7 @@ set showmode
 " ctrlp.vim
 let g:ctrlp_map = '<c-f>'
 let g:ctrlp_custom_ignore = 'node_modules\|build\|ios/Pods\|ios/Index\|*.xcodeproj\|.xcworkspace\|deps\|cache\|bundle\|_build\|vendor'
+let g:ctrlp_show_hidden = 1
 let g:ctrlp_prompt_mappings = {
 \  'PrtClearCache()': ['<c-r>'],
 \}
