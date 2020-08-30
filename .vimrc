@@ -70,8 +70,12 @@ set showmode
 
 " ctrlp.vim
 let g:ctrlp_map = '<c-f>'
-let g:ctrlp_custom_ignore = 'node_modules\|.git\|.next\|build\|ios/Pods\|ios/Index\|*.xcodeproj\|.xcworkspace\|deps\|cache\|bundle\|_build\|vendor'
+let g:ctrlp_working_path_mode = 0
 let g:ctrlp_show_hidden = 1
+let g:ctrlp_custom_ignore = {
+\ 'dir':  'node_modules\|.git\|.next\|build\|ios/Pods\|ios/Index\|*.xcodeproj\|.xcworkspace\|deps\|cache\|bundle\|_build\|vendor',
+\ 'file': '\v\.(exe|so|dll)$',
+\ }
 let g:ctrlp_prompt_mappings = {
 \  'PrtClearCache()': ['<c-r>'],
 \}
@@ -114,3 +118,6 @@ let g:user_emmet_settings = {
 \      'quote_char': "'",
 \  },
 \}
+
+" ripgrep
+let g:rg_highlight = 1
