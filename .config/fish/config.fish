@@ -13,3 +13,5 @@ set pure_color_git_unpulled_commits blue
 set pure_color_git_unpushed_commits blue
 set pure_color_ssh_user_root pure_color_white
 set pure_color_ssh_user_root pure_color_light
+
+bind \t accept-autosuggestion complete
