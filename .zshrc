@@ -100,7 +100,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-fpath+=$HOME/.zsh/pure
+fpath+=($HOME/.zsh/pure)
 autoload -U promptinit; promptinit
 zstyle :prompt:pure:prompt:success color green
 zstyle :prompt:pure:git:dirty color '#fff700'
