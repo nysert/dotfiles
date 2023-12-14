@@ -1,9 +1,5 @@
 {
-  "Ansi 6 Color" : {
-    "Green Component" : 0.73333334922790527,
-    "Red Component" : 0,
-    "Blue Component" : 0.73333334922790527
-  },
+  "Use Non-ASCII Font" : false,
   "Tags" : [
 
   ],
@@ -12,17 +8,28 @@
     "Red Component" : 0.3333333432674408,
     "Blue Component" : 1
   },
-  "Custom Directory" : "Recycle",
-  "Normal Font" : "MesloLGSForPowerline-Regular 14",
+  "Ansi 7 Color" : {
+    "Green Component" : 0.73333334922790527,
+    "Red Component" : 0.73333334922790527,
+    "Blue Component" : 0.73333334922790527
+  },
+  "Draw Powerline Glyphs" : true,
   "Bold Color" : {
     "Green Component" : 1,
     "Red Component" : 1,
     "Blue Component" : 1
   },
-  "Ansi 2 Color" : {
-    "Green Component" : 0.73333334922790527,
-    "Red Component" : 0,
-    "Blue Component" : 0
+  "Ansi 8 Color" : {
+    "Green Component" : 0.3333333432674408,
+    "Red Component" : 0.3333333432674408,
+    "Blue Component" : 0.3333333432674408
+  },
+  "Ansi 9 Color" : {
+    "Red Component" : 1,
+    "Color Space" : "sRGB",
+    "Blue Component" : 0,
+    "Alpha Component" : 1,
+    "Green Component" : 0
   },
   "Link Color" : {
     "Red Component" : 0,
@@ -31,6 +38,8 @@
     "Alpha Component" : 1,
     "Green Component" : 0.35916060209274292
   },
+  "Rows" : 25,
+  "Default Bookmark" : "No",
   "Ansi 5 Color" : {
     "Red Component" : 1,
     "Color Space" : "sRGB",
@@ -38,8 +47,6 @@
     "Alpha Component" : 1,
     "Green Component" : 0
   },
-  "Rows" : 25,
-  "Default Bookmark" : "No",
   "Cursor Guide Color" : {
     "Red Component" : 0.70213186740875244,
     "Color Space" : "sRGB",
@@ -82,9 +89,9 @@
   "Sync Title" : false,
   "Prompt Before Closing 2" : false,
   "BM Growl" : true,
+  "Mouse Reporting" : true,
   "Command" : "",
   "Description" : "Default",
-  "Mouse Reporting" : true,
   "Screen" : -1,
   "Selection Color" : {
     "Green Component" : 0.8353000283241272,
@@ -328,20 +335,12 @@
     "Red Component" : 0,
     "Blue Component" : 0
   },
-  "Transparency" : 0,
   "Ansi 1 Color" : {
     "Green Component" : 0,
     "Red Component" : 0.73333334922790527,
     "Blue Component" : 0
   },
   "Horizontal Spacing" : 1,
-  "Ansi 4 Color" : {
-    "Red Component" : 0,
-    "Color Space" : "sRGB",
-    "Blue Component" : 1,
-    "Alpha Component" : 1,
-    "Green Component" : 0.54278564453125
-  },
   "Ansi 3 Color" : {
     "Red Component" : 0.81321357165420238,
     "Color Space" : "sRGB",
@@ -349,24 +348,26 @@
     "Alpha Component" : 1,
     "Green Component" : 0.828948974609375
   },
-  "Use Non-ASCII Font" : false,
-  "Ansi 7 Color" : {
-    "Green Component" : 0.73333334922790527,
-    "Red Component" : 0.73333334922790527,
-    "Blue Component" : 0.73333334922790527
-  },
-  "Ansi 8 Color" : {
-    "Green Component" : 0.3333333432674408,
-    "Red Component" : 0.3333333432674408,
-    "Blue Component" : 0.3333333432674408
-  },
-  "Ansi 9 Color" : {
-    "Red Component" : 1,
+  "Ansi 4 Color" : {
+    "Red Component" : 0,
     "Color Space" : "sRGB",
-    "Blue Component" : 0,
+    "Blue Component" : 1,
     "Alpha Component" : 1,
-    "Green Component" : 0
+    "Green Component" : 0.54278564453125
   },
   "Guid" : "E338EFAC-F85D-46B9-9A56-BCA8EC0FB1AE",
+  "Ansi 6 Color" : {
+    "Green Component" : 0.73333334922790527,
+    "Red Component" : 0,
+    "Blue Component" : 0.73333334922790527
+  },
+  "Transparency" : 0,
+  "Normal Font" : "NotoMonoForPowerline 24",
+  "Custom Directory" : "Recycle",
+  "Ansi 2 Color" : {
+    "Green Component" : 0.73333334922790527,
+    "Red Component" : 0,
+    "Blue Component" : 0
+  },
   "Right Option Key Sends" : 0
 }

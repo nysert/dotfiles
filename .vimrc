@@ -15,7 +15,6 @@ Plugin 'simeji/winresizer'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'kristijanhusak/vim-hybrid-material'
 Plugin 'kien/ctrlp.vim'
-Plugin 'wakatime/vim-wakatime'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'jremmen/vim-ripgrep'
@@ -77,7 +76,7 @@ let g:ctrlp_map = '<c-f>'
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_show_hidden = 1
 let g:ctrlp_custom_ignore = {
-\ 'dir':  'node_modules\|.git\|.next\|ios/Pods\|ios/Index\|*.xcodeproj\|.xcworkspace\|deps\|cache\|bundle\|_build\|vendor\|tmp\|public\/packs\|public\/packs-test\|public\/system\|.sass-cache',
+\ 'dir':  'node_modules\|.git\|.next\|ios/Pods\|ios/Index\|*.xcodeproj\|.xcworkspace\|deps\|cache\|bundle\|vendor\|tmp\|public\/packs\|public\/packs-test\|public\/system\|.sass-cache',
 \ 'file': '\v\.(exe|so|dll)$',
 \ }
 let g:ctrlp_prompt_mappings = {

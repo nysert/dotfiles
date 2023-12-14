@@ -1,16 +1,9 @@
 - [Install oh-my-sh](https://ohmyz.sh/)
 - [Install Powerline Fonts](https://github.com/powerline/fonts)
-
-# pure
-[manual install](https://github.com/sindresorhus/pure#manually)
-```bash
-mkdir -p "$HOME/.zsh"
-git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
-```
-
-# Neovim symlink
-```bash
-  mkdir -p ${XDG_CONFIG_HOME:=$HOME/.config}
-  ln -s ~/.vim $XDG_CONFIG_HOME/nvim
-  ln -s ~/.vimrc $XDG_CONFIG_HOME/nvim/init.vim
-```
+- [Install Pure](https://github.com/sindresorhus/pure#manually)
+- [Install Brew](https://brew.sh)
+- copy .vimrc `cp .vimrc ~/.vimrc`
+- [Install Vundle](https://github.com/VundleVim/Vundle.vim.git)
+- Install ripgrep `brew install ripgrep`
+- Install node `brew install node`
+- Install vim plugins `vim .` -> `:PluginInstall`
