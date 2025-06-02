@@ -76,7 +76,7 @@ let g:ctrlp_map = '<c-f>'
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_show_hidden = 1
 let g:ctrlp_custom_ignore = {
-\ 'dir':  'node_modules\|.git\|.next\|ios/Pods\|ios/Index\|*.xcodeproj\|.xcworkspace\|deps\|cache\|bundle\|vendor\|tmp\|public\/packs\|public\/packs-test\|public\/system\|.sass-cache',
+\ 'dir':  'node_modules\|.git\|.next\|ios/Pods\|ios/Index\|*.xcodeproj\|.xcworkspace\|deps\|cache\|bundle\|vendor\|tmp\|public\/packs\|public\/packs-test\|public\/system\|.sass-cache\|venv',
 \ 'file': '\v\.(exe|so|dll)$',
 \ }
 let g:ctrlp_prompt_mappings = {
@@ -127,6 +127,20 @@ let g:rg_highlight = 1
 
 " set filetypes as typescriptreact
 autocmd BufNewFile,BufRead *.tsx,*.jsx set filetype=typescriptreact
+
+" CopyForLLM
+function! CopyForLLM()
+  let l:pos = getpos('.')
+  let l:filepath = expand('%:.')
+  execute 'normal! ggVG"+y'
+  let l:content = getreg('+')
+  let l:content = substitute(l:content, '\v\C^\s*\n', '', 'g')
+  let l:content = substitute(l:content, '\v\C\n\s*$', '', 'g')
+  let l:prompt = "on file " . l:filepath . ":\n\"\"\"\n" . l:content . "\n\"\"\"\n\n"
+  call setreg('+', l:prompt)
+  call setpos('.', l:pos)
+endfunction
+command! CLLM call CopyForLLM()
 
 " ======================
 " ====== coc.nvim ======
