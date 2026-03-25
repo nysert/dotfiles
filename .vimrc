@@ -40,7 +40,17 @@ set smartindent
 set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 set list
 set background=dark
+" >>> kristijanhusak/vim-hybrid-material
 colorscheme hybrid_material
+"set termguicolors
+"autocmd VimEnter * highlight Normal guibg=#262a33
+"autocmd VimEnter * highlight Normal guibg=#262a33
+"autocmd VimEnter * highlight LineNr guibg=#262a33
+"autocmd VimEnter * highlight SignColumn guibg=#262a33
+"autocmd VimEnter * highlight VertSplit guibg=#262a33
+"autocmd VimEnter * highlight StatusLine guibg=#262a33
+"autocmd VimEnter * highlight StatusLineNC guibg=#262a33
+" <<<< kristijanhusak/vim-hybrid-material
 set nohlsearch
 set colorcolumn=100
 set relativenumber
@@ -76,7 +86,7 @@ let g:ctrlp_map = '<c-f>'
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_show_hidden = 1
 let g:ctrlp_custom_ignore = {
-\ 'dir':  'node_modules\|.git\|.next\|ios/Pods\|ios/Index\|*.xcodeproj\|.xcworkspace\|deps\|cache\|bundle\|vendor\|tmp\|public\/packs\|public\/packs-test\|public\/system\|.sass-cache\|venv',
+\ 'dir':  'node_modules\|\.git\|\.next\|ios/Pods\|ios/Index\|*.xcodeproj\|\.xcworkspace\|deps\|cache\|bundle\|vendor\|tmp\|public\/packs\|public\/packs-test\|public\/system\|\.sass-cache\|venv',
 \ 'file': '\v\.(exe|so|dll)$',
 \ }
 let g:ctrlp_prompt_mappings = {
@@ -141,6 +151,84 @@ function! CopyForLLM()
   call setpos('.', l:pos)
 endfunction
 command! CLLM call CopyForLLM()
+
+" CopyForLLMDir
+function! CopyForLLMDir(dir, tracked) abort
+  if empty(a:dir) | echoerr 'Usage: :DirLLM[!] {dir}' | return | endif
+  let l:pos = getpos('.')
+  let l:root = fnamemodify(expand(a:dir, 1), ':p')
+  if !isdirectory(l:root) | echoerr 'Not a directory: ' . a:dir | return | endif
+
+  " Collect files (git-tracked if bang used)
+  let l:files = []
+  if a:tracked && executable('git')
+        \ && (isdirectory(l:root.'/.git') || !empty(system('git -C '.shellescape(l:root).' rev-parse --is-inside-work-tree 2> /dev/null')))
+    let l:raw = systemlist('git -C '.shellescape(l:root).' ls-files -z')
+    if v:shell_error == 0
+      let l:files = split(join(l:raw, ''), '\x00')
+      let l:files = map(l:files, {_,f -> empty(f)? '' : fnamemodify(l:root.'/'.f, ':p')})
+      let l:files = filter(l:files, {_,f -> !empty(f) && filereadable(f)})
+    endif
+  endif
+  if empty(l:files)
+    let l:all = globpath(l:root, '**/*', 0, 1)
+    let l:files = filter(copy(l:all), {_,v -> filereadable(v)})
+
+    let l:exclude_dir_pat  = '\v/(\.git|node_modules|dist|build|target|out|coverage|\.venv|\.tox|\.mypy_cache|\.pytest_cache|\.cache|__pycache__)(/|$)'
+    let l:exclude_name_pat = '\v(^|/)\.(DS_Store|_?env$|idea|vscode)(/|$)'
+    let l:exclude_ext_pat  = '\v\.(pyc|pyo|pyd|o|obj|a|so|dylib|dll|class|jar|war|wasm|lock|log|tmp|swp|swo|orig|bak|rej'
+          \ . '|png|jpe?g|gif|bmp|webp|ico|pdf|zip|t(ar|gz)|bz2|7z|rar|xz'
+          \ . '|mp3|wav|flac|mp4|mov|avi|mkv|webm|woff2?|ttf|otf)$'
+    let l:files = filter(l:files, {_,f -> f !~# l:exclude_dir_pat && f !~# l:exclude_name_pat && f !~? l:exclude_ext_pat})
+
+    " Optional include-only allowlist:
+    " let l:include_ext_pat = '\v\.(md|txt|py|vim|lua|sh|zsh|js|jsx|ts|tsx|json|yml|yaml|toml|rb|go|rs|java|kt|c|h|cpp|hpp|sql|html|css|scss)$'
+    " let l:files = filter(l:files, {_,f -> f =~? l:include_ext_pat})
+  endif
+
+  call sort(l:files)
+
+  let l:max_bytes = 800 * 1024
+  let l:total = 0
+  let l:out = []
+  for l:f in l:files
+    try | let l:lines = readfile(l:f, 'b') | catch | continue | endtry
+    let l:content = join(l:lines, "\n")
+    let l:content = substitute(l:content, '\v\C^\s*\n', '', 'g')
+    let l:content = substitute(l:content, '\v\C\n\s*$', '', 'g')
+    if empty(l:content) | continue | endif
+    let l:rel = fnamemodify(l:f, ':.')
+    let l:block = 'on file ' . l:rel . ":\n\"\"\"\n" . l:content . "\n\"\"\"\n\n"
+    if l:total + strlen(l:block) > l:max_bytes
+      call add(l:out, "\n---\n[truncated: size cap reached]") | break
+    endif
+    call add(l:out, l:block)
+    let l:total += strlen(l:block)
+  endfor
+
+  if empty(l:out)
+    echohl WarningMsg | echom 'No non-empty text files collected.' | echohl None
+    call setpos('.', l:pos)
+    return
+  endif
+
+  let l:bundle = join(l:out, '')
+
+  " Copy to clipboard(s) only; no buffers opened
+  if has('clipboard')
+    try | call setreg('+', l:bundle) | catch | endtry
+    try | call setreg('*', l:bundle) | catch | endtry
+  else
+    " Fallback: unnamed register so you can :put
+    call setreg('"', l:bundle)
+  endif
+
+  call setpos('.', l:pos)
+  echom 'Copied ' . len(l:out) . ' file blocks (~' . printf('%.1f', l:total/1024.0) . ' KB) to clipboard.'
+endfunction
+command! -nargs=1 -bang -complete=dir DirLLM call CopyForLLMDir(<f-args>, <bang>0)
+command! -nargs=1 -bang -complete=dir DIrLLM call CopyForLLMDir(<f-args>, <bang>0)
+command! -nargs=1 -bang -complete=dir DIRLLM call CopyForLLMDir(<f-args>, <bang>0)
 
 " ======================
 " ====== coc.nvim ======
