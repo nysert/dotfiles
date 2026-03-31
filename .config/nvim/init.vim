@@ -174,18 +174,31 @@ lua << EOF
 local nvim_tree = require("nvim-tree")
 local nvim_tree_api = require("nvim-tree.api")
 nvim_tree.setup({
+  view = {
+    number = true,
+    relativenumber = true,
+  },
   on_attach = function(bufnr)
     local opts = { buffer = bufnr, noremap = true, silent = true }
 
-    vim.keymap.set('n', 'a', function() nvim_tree_api.fs.create() end, opts)    -- create
-    vim.keymap.set('n', 'd', function() nvim_tree_api.fs.remove() end, opts)    -- delete
-    vim.keymap.set('n', 'r', function() nvim_tree_api.fs.rename() end, opts)    -- rename
-    vim.keymap.set('n', 'm', function() nvim_tree_api.fs.cut() end, opts)       -- move (cut)
-    vim.keymap.set('n', 'p', function() nvim_tree_api.fs.paste() end, opts)     -- paste (for move)
-    vim.keymap.set('n', 'x', function() nvim_tree_api.fs.copy() end, opts)      -- copy
-    vim.keymap.set('n', '<CR>', function() nvim_tree_api.node.open.edit() end, opts)  -- open
+    vim.keymap.set('n', 'a', function() nvim_tree_api.fs.create() end, opts)            -- create
+    vim.keymap.set('n', 'd', function() nvim_tree_api.fs.remove() end, opts)            -- delete
+    vim.keymap.set('n', 'r', function() nvim_tree_api.fs.rename() end, opts)            -- rename
+    vim.keymap.set('n', 'm', function() nvim_tree_api.fs.cut() end, opts)               -- move (cut)
+    vim.keymap.set('n', 'p', function() nvim_tree_api.fs.paste() end, opts)             -- paste (for move)
+    vim.keymap.set('n', 'x', function() nvim_tree_api.fs.copy() end, opts)              -- copy
+    vim.keymap.set('n', '<CR>', function() nvim_tree_api.node.open.edit() end, opts)    -- open
     vim.keymap.set('n', 's', function() nvim_tree_api.node.open.horizontal() end, opts) -- split
     vim.keymap.set('n', 'v', function() nvim_tree_api.node.open.vertical() end, opts)   -- vsplit
+    vim.keymap.set("n", "t", function() nvim_tree_api.node.open.tab() end, opts)        -- new tab foreground
+    vim.keymap.set("n", "T", function()                                                 -- new tab background
+      local node = nvim_tree_api.tree.get_node_under_cursor()
+      if not node then return end
+
+      local curtab = vim.api.nvim_get_current_tabpage()
+      vim.cmd("tabedit " .. vim.fn.fnameescape(node.absolute_path))
+      vim.api.nvim_set_current_tabpage(curtab)
+    end, opts)
   end,
 })
 
