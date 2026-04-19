@@ -2,7 +2,6 @@ call plug#begin()
 
 Plug 'tpope/vim-sensible'
 Plug 'glepnir/zephyr-nvim'
-Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-tree/nvim-tree.lua'
@@ -32,6 +31,11 @@ set nomousehide
 set termguicolors
 set lazyredraw
 set clipboard=unnamedplus
+
+set expandtab
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
 
 " -------- Normal Mode --------
 nnoremap <C-e> 5<C-e>             " Scroll down 5 lines
