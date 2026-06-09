@@ -10,6 +10,20 @@ Plug 'simeji/winresizer'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'airblade/vim-gitgutter'
 
+" C++ LSP / docs / go-to-definition
+Plug 'neovim/nvim-lspconfig'
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
+
+" Autocomplete from clangd/LSP
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
+Plug 'L3MON4D3/LuaSnip'
+Plug 'saadparwaiz1/cmp_luasnip'
+
 call plug#end()
 
 colorscheme zephyr
@@ -31,6 +45,8 @@ set nomousehide
 set termguicolors
 set lazyredraw
 set clipboard=unnamedplus
+set completeopt=menu,menuone,noselect
+set pumheight=15
 
 set expandtab
 set tabstop=2
@@ -58,7 +74,7 @@ inoremap <% <%%><ESC>2ha
 
 " -------- Paste Mode Toggle --------
 nnoremap <F2> :set invpaste paste?<CR>
-set showmode     " (optional) shows -- INSERT -- etc. on the last line (default in Neovim)
+set showmode
 
 " nvim-tree/nvim-tree.lua
 command! NERDTree NvimTreeToggle
@@ -112,6 +128,7 @@ function! CopyForLLMDir(dir, tracked) abort
       let l:files = filter(l:files, {_,f -> !empty(f) && filereadable(f)})
     endif
   endif
+
   if empty(l:files)
     let l:all = globpath(l:root, '**/*', 0, 1)
     let l:files = filter(copy(l:all), {_,v -> filereadable(v)})
@@ -168,6 +185,7 @@ function! CopyForLLMDir(dir, tracked) abort
   call setpos('.', l:pos)
   echom 'Copied ' . len(l:out) . ' file blocks (~' . printf('%.1f', l:total/1024.0) . ' KB) to clipboard.'
 endfunction
+
 command! -nargs=1 -bang -complete=dir DirLLM call CopyForLLMDir(<f-args>, <bang>0)
 command! -nargs=1 -bang -complete=dir DIrLLM call CopyForLLMDir(<f-args>, <bang>0)
 command! -nargs=1 -bang -complete=dir DIRLLM call CopyForLLMDir(<f-args>, <bang>0)
@@ -177,6 +195,7 @@ lua << EOF
 -- nvim-tree/nvim-tree.lua
 local nvim_tree = require("nvim-tree")
 local nvim_tree_api = require("nvim-tree.api")
+
 nvim_tree.setup({
   view = {
     number = true,
@@ -185,17 +204,18 @@ nvim_tree.setup({
   on_attach = function(bufnr)
     local opts = { buffer = bufnr, noremap = true, silent = true }
 
-    vim.keymap.set('n', 'a', function() nvim_tree_api.fs.create() end, opts)            -- create
-    vim.keymap.set('n', 'd', function() nvim_tree_api.fs.remove() end, opts)            -- delete
-    vim.keymap.set('n', 'r', function() nvim_tree_api.fs.rename() end, opts)            -- rename
-    vim.keymap.set('n', 'm', function() nvim_tree_api.fs.cut() end, opts)               -- move (cut)
-    vim.keymap.set('n', 'p', function() nvim_tree_api.fs.paste() end, opts)             -- paste (for move)
-    vim.keymap.set('n', 'x', function() nvim_tree_api.fs.copy() end, opts)              -- copy
-    vim.keymap.set('n', '<CR>', function() nvim_tree_api.node.open.edit() end, opts)    -- open
-    vim.keymap.set('n', 's', function() nvim_tree_api.node.open.horizontal() end, opts) -- split
-    vim.keymap.set('n', 'v', function() nvim_tree_api.node.open.vertical() end, opts)   -- vsplit
-    vim.keymap.set("n", "t", function() nvim_tree_api.node.open.tab() end, opts)        -- new tab foreground
-    vim.keymap.set("n", "T", function()                                                 -- new tab background
+    vim.keymap.set("n", "a", function() nvim_tree_api.fs.create() end, opts)
+    vim.keymap.set("n", "d", function() nvim_tree_api.fs.remove() end, opts)
+    vim.keymap.set("n", "r", function() nvim_tree_api.fs.rename() end, opts)
+    vim.keymap.set("n", "m", function() nvim_tree_api.fs.cut() end, opts)
+    vim.keymap.set("n", "p", function() nvim_tree_api.fs.paste() end, opts)
+    vim.keymap.set("n", "x", function() nvim_tree_api.fs.copy() end, opts)
+    vim.keymap.set("n", "<CR>", function() nvim_tree_api.node.open.edit() end, opts)
+    vim.keymap.set("n", "s", function() nvim_tree_api.node.open.horizontal() end, opts)
+    vim.keymap.set("n", "v", function() nvim_tree_api.node.open.vertical() end, opts)
+    vim.keymap.set("n", "t", function() nvim_tree_api.node.open.tab() end, opts)
+
+    vim.keymap.set("n", "T", function()
       local node = nvim_tree_api.tree.get_node_under_cursor()
       if not node then return end
 
@@ -207,8 +227,9 @@ nvim_tree.setup({
 })
 
 -- nvim-telescope/telescope.nvim
-local actions = require('telescope.actions')
-require('telescope').setup{
+local actions = require("telescope.actions")
+
+require("telescope").setup({
   defaults = {
     mappings = {
       i = {
@@ -221,5 +242,166 @@ require('telescope').setup{
       },
     },
   },
-}
+})
+
+-- Mason: installs/manages language servers like clangd
+require("mason").setup()
+
+require("mason-lspconfig").setup({
+  ensure_installed = {
+    "clangd",
+  },
+})
+
+-- Completion capabilities for LSP
+local cmp = require("cmp")
+local cmp_lsp = require("cmp_nvim_lsp")
+local capabilities = cmp_lsp.default_capabilities()
+
+-- Helper to truncate long C++ signatures so the menu does not cover the whole screen
+local function truncate(str, max_width)
+  if vim.fn.strdisplaywidth(str) <= max_width then
+    return str
+  end
+
+  return vim.fn.strcharpart(str, 0, max_width - 1) .. "…"
+end
+
+-- Autocomplete setup
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      require("luasnip").lsp_expand(args.body)
+    end,
+  },
+
+  window = {
+    completion = cmp.config.window.bordered({
+      side_padding = 1,
+      scrollbar = true,
+    }),
+    documentation = cmp.config.window.bordered({
+      max_height = 12,
+      max_width = math.floor(vim.o.columns * 0.45),
+    }),
+  },
+
+  formatting = {
+    -- Hide the useless "Text" column from completion items
+    fields = { "abbr", "menu" },
+
+    format = function(entry, vim_item)
+      local max_width = math.floor(vim.o.columns * 0.65)
+
+      vim_item.abbr = truncate(vim_item.abbr, max_width)
+
+      local source_names = {
+        nvim_lsp = "[LSP]",
+        nvim_lsp_signature_help = "[sig]",
+        luasnip = "[snippet]",
+        buffer = "[buffer]",
+        path = "[path]",
+      }
+
+      vim_item.menu = source_names[entry.source.name] or ""
+
+      return vim_item
+    end,
+  },
+
+  mapping = cmp.mapping.preset.insert({
+    -- Normal autocomplete
+    ["<C-Space>"] = cmp.mapping.complete(),
+
+    -- Signature/overload menu ONLY
+    ["<C-l>"] = cmp.mapping(function()
+      if cmp.visible() then
+        cmp.close()
+      end
+
+      cmp.complete({
+        config = {
+          sources = cmp.config.sources({
+            { name = "nvim_lsp_signature_help" },
+          }),
+        },
+      })
+    end, { "i", "s" }),
+
+    -- Confirm selected completion item
+    ["<CR>"] = cmp.mapping.confirm({ select = true }),
+
+    -- Move through completion/signature items
+    ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+    ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+
+    -- Scroll documentation window
+    ["<C-d>"] = cmp.mapping.scroll_docs(4),
+    ["<C-u>"] = cmp.mapping.scroll_docs(-4),
+
+    -- Close menu
+    ["<C-e>"] = cmp.mapping.abort(),
+  }),
+
+  -- Normal autocomplete sources.
+  -- Signature help is intentionally NOT here globally.
+  -- It is opened only with <C-l>.
+  sources = cmp.config.sources({
+    { name = "nvim_lsp" },
+    { name = "luasnip" },
+    { name = "buffer" },
+    { name = "path" },
+  }),
+
+  experimental = {
+    ghost_text = false,
+  },
+})
+
+-- C++ LSP: clangd
+vim.lsp.config("clangd", {
+  capabilities = capabilities,
+
+  cmd = {
+    "clangd",
+    "--background-index",
+    "--clang-tidy",
+    "--completion-style=detailed",
+    "--header-insertion=iwyu",
+  },
+
+  init_options = {
+    fallbackFlags = {
+      "-std=c++20",
+    },
+  },
+})
+
+vim.lsp.enable("clangd")
+
+-- LSP keymaps
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(event)
+    local opts = { buffer = event.buf, noremap = true, silent = true }
+
+    -- Docs / type info
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+
+    -- Navigation
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+    vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+    vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+    vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, opts)
+
+    -- Refactor / fixes
+    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+    vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+
+    -- Diagnostics
+    vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+    vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+    vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+  end,
+})
 EOF
