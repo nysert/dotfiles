@@ -20,9 +20,9 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
+Plug 'onsails/lspkind.nvim'
 
 call plug#end()
 
@@ -256,10 +256,14 @@ require("mason-lspconfig").setup({
 -- Completion capabilities for LSP
 local cmp = require("cmp")
 local cmp_lsp = require("cmp_nvim_lsp")
+local lspkind = require("lspkind")
 local capabilities = cmp_lsp.default_capabilities()
 
--- Helper to truncate long C++ signatures so the menu does not cover the whole screen
 local function truncate(str, max_width)
+  if not str then
+    return ""
+  end
+
   if vim.fn.strdisplaywidth(str) <= max_width then
     return str
   end
@@ -267,13 +271,155 @@ local function truncate(str, max_width)
   return vim.fn.strcharpart(str, 0, max_width - 1) .. "…"
 end
 
--- Autocomplete setup
+local function clean_signature(str)
+  if not str then
+    return ""
+  end
+
+  -- Remove markdown emphasis used to highlight active params.
+  -- Do NOT remove single *, because C++ pointers use it.
+  str = str:gsub("%*%*%*(.-)%*%*%*", "%1")
+  str = str:gsub("%*%*(.-)%*%*", "%1")
+  str = str:gsub("___(.-)___", "%1")
+  str = str:gsub("__(.-)__", "%1")
+
+  return str
+end
+
+-- Custom signature source.
+-- This avoids cmp-nvim-lsp-signature-help scrolling to clangd's active signature.
+local signature_source = {}
+
+signature_source.new = function()
+  return setmetatable({}, { __index = signature_source })
+end
+
+signature_source.is_available = function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local clients = vim.lsp.get_clients({
+    bufnr = bufnr,
+    method = "textDocument/signatureHelp",
+  })
+
+  return #clients > 0
+end
+
+signature_source.complete = function(_, _, callback)
+  local bufnr = vim.api.nvim_get_current_buf()
+
+  local clients = vim.lsp.get_clients({
+    bufnr = bufnr,
+    method = "textDocument/signatureHelp",
+  })
+
+  if #clients == 0 then
+    callback({ items = {}, isIncomplete = false })
+    return
+  end
+
+  local offset_encoding = clients[1].offset_encoding or "utf-16"
+  local params = vim.lsp.util.make_position_params(0, offset_encoding)
+
+  vim.lsp.buf_request_all(bufnr, "textDocument/signatureHelp", params, function(results)
+    local items = {}
+
+    for _, response in pairs(results) do
+      local result = response.result
+
+      if result and result.signatures then
+        for index, sig in ipairs(result.signatures) do
+          local label = clean_signature(sig.label or "")
+
+          table.insert(items, {
+            label = label,
+            word = "",
+            insertText = "",
+            kind = vim.lsp.protocol.CompletionItemKind.Function,
+            documentation = sig.documentation,
+            data = {
+              signature_index = index,
+            },
+          })
+        end
+
+        break
+      end
+    end
+
+    callback({
+      items = items,
+      isIncomplete = false,
+    })
+  end)
+end
+
+cmp.register_source("lsp_signature_list", signature_source.new())
+
+local function open_signature_menu()
+  if cmp.visible() then
+    cmp.abort()
+  end
+
+  cmp.complete({
+    config = {
+      preselect = cmp.PreselectMode.None,
+
+      sources = cmp.config.sources({
+        { name = "lsp_signature_list" },
+      }),
+
+      sorting = {
+        comparators = {
+          function(entry1, entry2)
+            if entry1.source.name == "lsp_signature_list"
+                and entry2.source.name == "lsp_signature_list" then
+              local index1 = entry1.completion_item.data.signature_index or 0
+              local index2 = entry2.completion_item.data.signature_index or 0
+              return index1 < index2
+            end
+          end,
+        },
+      },
+    },
+  })
+
+  -- Select first item after cmp renders.
+  vim.defer_fn(function()
+    if cmp.visible() then
+      cmp.select_next_item({
+        behavior = cmp.SelectBehavior.Select,
+      })
+    end
+  end, 30)
+end
+
+-- Diagnostic/error UI
+vim.diagnostic.config({
+  virtual_text = {
+    source = "if_many",
+    prefix = "●",
+  },
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
+  float = {
+    source = "always",
+    border = "rounded",
+    header = "",
+    prefix = "",
+  },
+})
+
 cmp.setup({
   snippet = {
     expand = function(args)
       require("luasnip").lsp_expand(args.body)
     end,
   },
+
+  -- Do not preselect items globally.
+  preselect = cmp.PreselectMode.None,
 
   window = {
     completion = cmp.config.window.bordered({
@@ -282,28 +428,52 @@ cmp.setup({
     }),
     documentation = cmp.config.window.bordered({
       max_height = 12,
-      max_width = math.floor(vim.o.columns * 0.45),
+      max_width = math.floor(vim.o.columns * 0.35),
     }),
   },
 
   formatting = {
-    -- Hide the useless "Text" column from completion items
-    fields = { "abbr", "menu" },
+    fields = { "abbr", "kind", "menu" },
 
     format = function(entry, vim_item)
-      local max_width = math.floor(vim.o.columns * 0.65)
-
-      vim_item.abbr = truncate(vim_item.abbr, max_width)
+      local item = entry:get_completion_item()
 
       local source_names = {
         nvim_lsp = "[LSP]",
-        nvim_lsp_signature_help = "[sig]",
+        lsp_signature_list = "[sig]",
         luasnip = "[snippet]",
         buffer = "[buffer]",
         path = "[path]",
       }
 
-      vim_item.menu = source_names[entry.source.name] or ""
+      -- Signature entries:
+      -- Full signature is shown in the main completion pane.
+      if entry.source.name == "lsp_signature_list" then
+        vim_item.abbr = truncate(item.label or vim_item.abbr, math.floor(vim.o.columns * 0.72))
+        vim_item.kind = "[sig]"
+        vim_item.menu = ""
+
+        return vim_item
+      end
+
+      -- Normal autocomplete entries
+      vim_item.kind = lspkind.symbolic(vim_item.kind, {
+        mode = "symbol_text",
+      })
+
+      local detail =
+        item.detail
+        or (item.labelDetails and item.labelDetails.detail)
+        or (item.labelDetails and item.labelDetails.description)
+        or ""
+
+      vim_item.abbr = truncate(vim_item.abbr, math.floor(vim.o.columns * 0.40))
+
+      if detail ~= "" then
+        vim_item.menu = truncate(detail, math.floor(vim.o.columns * 0.22))
+      else
+        vim_item.menu = source_names[entry.source.name] or ""
+      end
 
       return vim_item
     end,
@@ -313,19 +483,10 @@ cmp.setup({
     -- Normal autocomplete
     ["<C-Space>"] = cmp.mapping.complete(),
 
-    -- Signature/overload menu ONLY
+    -- Signature overload list.
+    -- Opens from item 1 at the top.
     ["<C-l>"] = cmp.mapping(function()
-      if cmp.visible() then
-        cmp.close()
-      end
-
-      cmp.complete({
-        config = {
-          sources = cmp.config.sources({
-            { name = "nvim_lsp_signature_help" },
-          }),
-        },
-      })
+      open_signature_menu()
     end, { "i", "s" }),
 
     -- Confirm selected completion item
@@ -343,9 +504,8 @@ cmp.setup({
     ["<C-e>"] = cmp.mapping.abort(),
   }),
 
-  -- Normal autocomplete sources.
-  -- Signature help is intentionally NOT here globally.
-  -- It is opened only with <C-l>.
+  -- Normal autocomplete sources only.
+  -- Signature overloads open ONLY with <C-l>.
   sources = cmp.config.sources({
     { name = "nvim_lsp" },
     { name = "luasnip" },
@@ -398,10 +558,20 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
     vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
 
-    -- Diagnostics
-    vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+    -- Diagnostics / errors
+    vim.keymap.set("n", "<leader>d", function()
+      vim.diagnostic.open_float(nil, {
+        focus = false,
+        scope = "cursor",
+      })
+    end, opts)
+
     vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
     vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+
+    vim.keymap.set("n", "<leader>q", function()
+      vim.diagnostic.setloclist()
+    end, opts)
   end,
 })
 EOF
