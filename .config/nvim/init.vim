@@ -10,12 +10,13 @@ Plug 'simeji/winresizer'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'airblade/vim-gitgutter'
 
-" C++ LSP / docs / go-to-definition
+" LSP / docs / go-to-definition
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
+Plug 'WhoIsSethDaniel/mason-tool-installer.nvim'
 
-" Autocomplete from clangd/LSP
+" Autocomplete from LSP
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -23,6 +24,10 @@ Plug 'hrsh7th/cmp-path'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 Plug 'onsails/lspkind.nvim'
+
+" Formatting and linting
+Plug 'stevearc/conform.nvim'
+Plug 'mfussenegger/nvim-lint'
 
 call plug#end()
 
@@ -244,14 +249,56 @@ require("telescope").setup({
   },
 })
 
--- Mason: installs/manages language servers like clangd
+-- Mason: installs/manages language servers like clangd, rust_analyzer, ts_ls, etc.
 require("mason").setup()
 
 require("mason-lspconfig").setup({
   ensure_installed = {
+    -- C / C++
     "clangd",
+
+    -- Rust
+    "rust_analyzer",
+
+    -- JavaScript / TypeScript
+    "ts_ls",
+    "eslint",
+
+    -- Go
+    "gopls",
+
+    -- Ruby
+    "ruby_lsp",
+
+    -- Elixir
+    "elixirls",
   },
 })
+
+-- External formatter/linter CLIs managed by Mason
+local ok_mason_tools, mason_tool_installer = pcall(require, "mason-tool-installer")
+if ok_mason_tools then
+  mason_tool_installer.setup({
+    ensure_installed = {
+      -- C / C++
+      "clang-format",
+
+      -- JavaScript / TypeScript
+      "prettier",
+      "eslint_d",
+      "biome",
+
+      -- Go
+      "goimports",
+      "gofumpt",
+      "golangci-lint",
+
+      -- Ruby
+      "rubocop",
+      "standardrb",
+    },
+  })
+end
 
 -- Completion capabilities for LSP
 local cmp = require("cmp")
@@ -518,6 +565,87 @@ cmp.setup({
   },
 })
 
+-- Formatting with conform.nvim
+local ok_conform, conform = pcall(require, "conform")
+if ok_conform then
+  conform.setup({
+    formatters_by_ft = {
+      -- C / C++
+      c = { "clang_format" },
+      cpp = { "clang_format" },
+
+      -- Rust
+      rust = { "rustfmt" },
+
+      -- JavaScript / TypeScript
+      javascript = { "biome", "prettier", stop_after_first = true },
+      javascriptreact = { "biome", "prettier", stop_after_first = true },
+      typescript = { "biome", "prettier", stop_after_first = true },
+      typescriptreact = { "biome", "prettier", stop_after_first = true },
+      json = { "biome", "prettier", stop_after_first = true },
+      jsonc = { "biome", "prettier", stop_after_first = true },
+      css = { "biome", "prettier", stop_after_first = true },
+      scss = { "prettier" },
+      html = { "prettier" },
+      markdown = { "prettier" },
+
+      -- Go
+      go = { "goimports", "gofumpt" },
+
+      -- Ruby
+      ruby = { "rubocop" },
+
+      -- Elixir
+      elixir = { "mix" },
+      eelixir = { "mix" },
+      heex = { "mix" },
+    },
+
+    format_on_save = {
+      timeout_ms = 3000,
+      lsp_format = "fallback",
+    },
+  })
+
+  vim.keymap.set("n", "<leader>f", function()
+    conform.format({
+      async = true,
+      lsp_format = "fallback",
+    })
+  end, { noremap = true, silent = true })
+end
+
+-- Linting with nvim-lint
+local ok_lint, lint = pcall(require, "lint")
+if ok_lint then
+  lint.linters_by_ft = {
+    -- JavaScript / TypeScript
+    javascript = { "eslint_d" },
+    javascriptreact = { "eslint_d" },
+    typescript = { "eslint_d" },
+    typescriptreact = { "eslint_d" },
+
+    -- Go
+    go = { "golangcilint" },
+
+    -- Ruby
+    ruby = { "rubocop" },
+
+    -- Elixir
+    elixir = { "credo" },
+  }
+
+  vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
+    callback = function()
+      lint.try_lint()
+    end,
+  })
+
+  vim.keymap.set("n", "<leader>l", function()
+    lint.try_lint()
+  end, { noremap = true, silent = true })
+end
+
 -- C++ LSP: clangd
 vim.lsp.config("clangd", {
   capabilities = capabilities,
@@ -538,6 +666,54 @@ vim.lsp.config("clangd", {
 })
 
 vim.lsp.enable("clangd")
+
+-- Other language servers
+local servers = {
+  -- Rust
+  rust_analyzer = {
+    settings = {
+      ["rust-analyzer"] = {
+        cargo = {
+          allFeatures = true,
+        },
+        check = {
+          command = "clippy",
+        },
+      },
+    },
+  },
+
+  -- JavaScript / TypeScript
+  ts_ls = {},
+
+  eslint = {},
+
+  -- Go
+  gopls = {
+    settings = {
+      gopls = {
+        gofumpt = true,
+        staticcheck = true,
+        analyses = {
+          unusedparams = true,
+          shadow = true,
+        },
+      },
+    },
+  },
+
+  -- Ruby
+  ruby_lsp = {},
+
+  -- Elixir
+  elixirls = {},
+}
+
+for server_name, config in pairs(servers) do
+  config.capabilities = capabilities
+  vim.lsp.config(server_name, config)
+  vim.lsp.enable(server_name)
+end
 
 -- LSP keymaps
 vim.api.nvim_create_autocmd("LspAttach", {
