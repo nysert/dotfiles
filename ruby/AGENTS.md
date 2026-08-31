@@ -472,3 +472,24 @@ Avoid speculative abstractions.
 Do not create infrastructure for hypothetical future requirements unless the current task requires it.
 
 When modifying existing behavior, preserve public behavior unless the task explicitly requires changing it.
+
+---
+
+## UI / Tailwind
+
+When creating or modifying HTML, ERB, ViewComponents, CSS, Tailwind classes,
+forms, navigation, or any other user-facing UI:
+
+**You MUST read and follow `docs/tailwind.md` before making UI changes.**
+
+`docs/tailwind.md` is the source of truth for:
+
+- Tailwind conventions
+- light/dark theming
+- semantic colors
+- buttons and interaction states
+- component reuse
+- accessibility
+- UI consistency
+
+Do not introduce UI conventions that conflict with that file.
