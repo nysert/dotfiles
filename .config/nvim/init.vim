@@ -253,6 +253,11 @@ require("telescope").setup({
 require("mason").setup()
 
 require("mason-lspconfig").setup({
+  -- Do not auto-start every LSP installed in Mason.
+  -- We explicitly enable the servers we want below. This prevents tools like
+  -- standardrb from silently attaching as a second Ruby linter.
+  automatic_enable = false,
+
   ensure_installed = {
     -- C / C++
     "clangd",
@@ -293,9 +298,7 @@ if ok_mason_tools then
       "gofumpt",
       "golangci-lint",
 
-      -- Ruby
-      "rubocop",
-      "standardrb",
+      -- Ruby formatting/linting uses the project's `bundle exec rubocop`.
     },
   })
 end
@@ -569,6 +572,30 @@ cmp.setup({
 local ok_conform, conform = pcall(require, "conform")
 if ok_conform then
   conform.setup({
+    formatters = {
+      -- Always use the RuboCop version from the current Ruby project's bundle.
+      -- This avoids accidentally using Mason's/global RuboCop with different
+      -- versions or cops than the Gemfile.lock.
+      rubocop = {
+        inherit = false,
+        command = "bundle",
+        args = {
+          "exec",
+          "rubocop",
+          "-a",
+          "-f",
+          "quiet",
+          "--stderr",
+          "--stdin",
+          "$RELATIVE_FILEPATH",
+        },
+        stdin = true,
+        cwd = require("conform.util").root_file({ "Gemfile" }),
+        require_cwd = true,
+        exit_codes = { 0, 1 },
+      },
+    },
+
     formatters_by_ft = {
       -- C / C++
       c = { "clang_format" },
@@ -618,6 +645,38 @@ end
 -- Linting with nvim-lint
 local ok_lint, lint = pcall(require, "lint")
 if ok_lint then
+  local function ruby_project_root(bufnr)
+    local filename = vim.api.nvim_buf_get_name(bufnr)
+    local start_path = filename ~= "" and vim.fs.dirname(filename) or vim.fn.getcwd()
+    local gemfile = vim.fs.find("Gemfile", {
+      upward = true,
+      path = start_path,
+    })[1]
+
+    return gemfile and vim.fs.dirname(gemfile) or nil
+  end
+
+  -- Use the project's exact RuboCop command for diagnostics.
+  -- nvim-lint requires `args` to be a table, but individual arguments may
+  -- be functions. Compute the project-relative stdin filename lazily.
+  local rubocop = lint.linters.rubocop
+  rubocop.cmd = "bundle"
+  rubocop.args = {
+    "exec",
+    "rubocop",
+    "--format",
+    "json",
+    "--force-exclusion",
+    "--stdin",
+    function()
+      local bufnr = vim.api.nvim_get_current_buf()
+      local filename = vim.api.nvim_buf_get_name(bufnr)
+      local root = ruby_project_root(bufnr)
+
+      return root and vim.fs.relpath(root, filename) or filename
+    end,
+  }
+
   lint.linters_by_ft = {
     -- JavaScript / TypeScript
     javascript = { "eslint_d" },
@@ -635,14 +694,26 @@ if ok_lint then
     elixir = { "credo" },
   }
 
+  local function run_linter(bufnr)
+    if vim.bo[bufnr].filetype == "ruby" then
+      local cwd = ruby_project_root(bufnr)
+      if cwd then
+        lint.try_lint(nil, { cwd = cwd })
+      end
+      return
+    end
+
+    lint.try_lint()
+  end
+
   vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
-    callback = function()
-      lint.try_lint()
+    callback = function(args)
+      run_linter(args.buf)
     end,
   })
 
   vim.keymap.set("n", "<leader>l", function()
-    lint.try_lint()
+    run_linter(vim.api.nvim_get_current_buf())
   end, { noremap = true, silent = true })
 end
 
@@ -684,7 +755,41 @@ local servers = {
   },
 
   -- JavaScript / TypeScript
-  ts_ls = {},
+  --
+  -- TypeScript 7 no longer ships tsserver.js. For TS7 workspaces, start the
+  -- workspace-local native compiler as an LSP (`tsc --lsp --stdio`).
+  -- For TypeScript 6 and older, keep using typescript-language-server.
+  ts_ls = {
+    cmd = function(dispatchers, config)
+      local root = (config or {}).root_dir
+
+      if root then
+        local local_tsc = vim.fs.joinpath(root, "node_modules", ".bin", "tsc")
+        local local_tsserver = vim.fs.joinpath(
+          root,
+          "node_modules",
+          "typescript",
+          "lib",
+          "tsserver.js"
+        )
+
+        if vim.fn.executable(local_tsc) == 1 and vim.fn.filereadable(local_tsserver) == 0 then
+          return vim.lsp.rpc.start({ local_tsc, "--lsp", "--stdio" }, dispatchers)
+        end
+      end
+
+      local cmd = "typescript-language-server"
+
+      if root then
+        local local_cmd = vim.fs.joinpath(root, "node_modules", ".bin", cmd)
+        if vim.fn.executable(local_cmd) == 1 then
+          cmd = local_cmd
+        end
+      end
+
+      return vim.lsp.rpc.start({ cmd, "--stdio" }, dispatchers)
+    end,
+  },
 
   eslint = {},
 
@@ -703,7 +808,20 @@ local servers = {
   },
 
   -- Ruby
-  ruby_lsp = {},
+  -- Ruby LSP provides navigation/completion/etc., but RuboCop diagnostics and
+  -- formatting are disabled here so there is only one RuboCop source:
+  -- nvim-lint + Conform, both using `bundle exec rubocop` from the project.
+  ruby_lsp = {
+    init_options = {
+      formatter = "none",
+      linters = {},
+      enabledFeatures = {
+        diagnostics = false,
+        formatting = false,
+        codeActions = false,
+      },
+    },
+  },
 
   -- Elixir
   elixirls = {},
