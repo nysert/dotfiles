@@ -1,0 +1,64 @@
+# Omakase Ruby styling for Rails
+
+inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+
+# Project-specific overrides
+
+Layout/IndentationWidth:
+Enabled: true
+Width: 2
+
+Layout/IndentationConsistency:
+Enabled: true
+EnforcedStyle: normal
+
+Layout/AccessModifierIndentation:
+Enabled: true
+EnforcedStyle: indent
+
+Layout/EmptyLines:
+Enabled: true
+
+Layout/EmptyLinesAroundMethodBody:
+Enabled: true
+
+Layout/EmptyLinesAroundAccessModifier:
+Enabled: true
+
+Layout/TrailingEmptyLines:
+Enabled: true
+
+Style/TrailingCommaInArrayLiteral:
+Enabled: true
+EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+Enabled: true
+EnforcedStyleForMultiline: comma
+
+# Prefer:
+#
+# class Users::Create
+# end
+#
+# over:
+#
+# module Users
+# class Create
+# end
+# end
+Style/ClassAndModuleChildren:
+Enabled: true
+EnforcedStyle: compact
+
+# Prefer:
+#
+# def call
+# end
+#
+# over:
+#
+# def call; end
+Style/EmptyMethod:
+Enabled: true
+EnforcedStyle: expanded
