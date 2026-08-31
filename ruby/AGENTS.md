@@ -4,321 +4,76 @@
 
 This is a Ruby on Rails application.
 
-Follow existing Rails conventions and project patterns unless this file explicitly defines a different convention.
+Follow existing Rails conventions and project patterns unless project instructions explicitly define otherwise.
 
 Keep changes focused on the requested task.
 
 Do not modify unrelated code unless required for correctness.
 
----
-
-## Ruby style
-
-`.rubocop.yml` is the source of truth for Ruby formatting and style.
-
-Use:
-
-- 2 spaces for indentation.
-- No tabs.
-- Trailing commas in multiline arrays and hashes.
-- Expanded multiline methods instead of one-line empty methods.
-
-Prefer compact namespace declarations.
-
-Use:
-
-```ruby
-class A::B::C
-  def call
-  end
-end
-```
-
-Do not use:
-
-```ruby
-module A
-  module B
-    class C
-      def call
-      end
-    end
-  end
-end
-```
-
-Likewise, prefer:
-
-```ruby
-module A::B
-end
-```
-
-over nested module declarations when the parent namespaces already exist.
+Before introducing a new pattern or abstraction, search the project for an existing equivalent.
 
 ---
 
-## Application architecture
+## Sources of truth
 
-Prefer thin controllers and thin models.
+Use these project documents when working in the corresponding area.
 
-Most application workflows, orchestration, and business logic should live in `app/services`.
+### Ruby
 
-### Controllers
+When creating or modifying Ruby code, read:
 
-Controllers should primarily:
+`docs/ruby.md`
 
-- Authenticate.
-- Authorize.
-- Read and validate request parameters.
-- Call application services.
-- Render or redirect based on the result.
+`.rubocop.yml` remains the source of truth for mechanically enforceable Ruby formatting and style.
 
-Do not put substantial business logic, workflows, external API orchestration, or multi-step operations directly in controllers.
+### Application architecture
 
-Prefer:
+When modifying controllers, models, services, background jobs, or business logic, read:
 
-```ruby
-class UsersController < ApplicationController
-  def create
-    result = Users::Create.new(user_params).call
+`docs/architecture.md`
 
-    if result.success?
-      redirect_to result.user
-    else
-      render :new, status: :unprocessable_entity
-    end
-  end
+### Testing
 
-  private
+When adding or changing application behavior, read:
 
-  def user_params
-    params.expect(user: [:name, :email])
-  end
-end
-```
+`docs/testing.md`
 
-over implementing the complete user-creation workflow inside the controller.
+### Security
 
-### Models
+When working with authentication, authorization, user input, secrets, external APIs, uploads, or other security-sensitive functionality, read:
 
-Models should primarily contain:
+`docs/security.md`
 
-- Associations.
-- Validations.
-- Scopes.
-- Persistence-related behavior.
-- Small pieces of behavior intrinsic to the model.
+### UI / Tailwind
 
-Avoid filling Active Record models with application workflows or orchestration.
+When creating or modifying HTML, ERB, ViewComponents, CSS, Tailwind classes, forms, navigation, or any other user-facing UI, read:
 
-Behavior that naturally describes the object itself may remain on the model.
+`docs/tailwind.md`
 
-For example:
+`docs/tailwind.md` is the source of truth for:
 
-```ruby
-appointment.cancelled?
-user.active?
-subscription.expired?
-```
+- Tailwind conventions.
+- Light/dark theming.
+- Semantic colors.
+- Buttons and interaction states.
+- Component reuse.
+- Accessibility.
+- UI consistency.
 
-A workflow involving several operations should generally be implemented as a service.
+Do not introduce conventions that conflict with these files.
 
 ---
 
-## Services
-
-Put most application and business logic in:
-
-```text
-app/services/
-```
-
-Organize services by plural domain namespace and action.
+## Architecture defaults
 
 Prefer:
 
-```text
-app/services/users/create.rb
-app/services/users/delete.rb
-app/services/users/login.rb
-
-app/services/appointments/create.rb
-app/services/appointments/cancel.rb
-app/services/appointments/reschedule.rb
-
-app/services/payments/charge.rb
-app/services/payments/refund.rb
-```
-
-The class should match the path.
-
-For example:
-
-```text
-app/services/users/create.rb
-```
-
-contains:
-
-```ruby
-class Users::Create
-  def initialize(...)
-    ...
-  end
-
-  def call
-    ...
-  end
-end
-```
-
-And:
-
-```text
-app/services/appointments/reschedule.rb
-```
-
-contains:
-
-```ruby
-class Appointments::Reschedule
-  def initialize(...)
-    ...
-  end
-
-  def call
-    ...
-  end
-end
-```
-
-### Service naming
-
-Use plural domain namespaces.
-
-Prefer:
-
-```ruby
-Users::Create
-Users::Delete
-Users::Login
-
-Appointments::Create
-Appointments::Cancel
-Appointments::Reschedule
-
-Payments::Charge
-Payments::Refund
-
-Subscriptions::Create
-Subscriptions::Renew
-Subscriptions::Cancel
-```
-
-Use action-oriented class names.
-
-Prefer:
-
-```ruby
-Users::Register
-Payments::Charge
-Appointments::Reschedule
-Subscriptions::Renew
-```
-
-Avoid generic implementation-oriented names such as:
-
-```ruby
-UserService
-PaymentProcessor
-AppointmentManager
-SubscriptionHandler
-```
-
-Do not add a redundant `Service` suffix.
-
-Avoid:
-
-```ruby
-Users::CreateService
-Appointments::CancelService
-```
-
-Do not add a top-level `Services` namespace.
-
-Avoid:
-
-```ruby
-Services::Users::Create
-Services::Appointments::Cancel
-```
-
-The convention is:
-
-- The `app/services` folder identifies the object as a service.
-- The namespace identifies the domain.
-- The class identifies the action.
-
-### Service design
-
-Prefer one public entry point:
-
-```ruby
-#call
-```
-
-Example:
-
-```ruby
-class Appointments::Cancel
-  def initialize(appointment:)
-    @appointment = appointment
-  end
-
-  def call
-    ActiveRecord::Base.transaction do
-      appointment.update!(status: :cancelled)
-      appointment.reminders.destroy_all
-    end
-
-    appointment
-  end
-
-  private
-
-  attr_reader :appointment
-end
-```
-
-Use private helper methods where they improve readability.
-
-Prefer explicit dependencies when services interact with external systems.
-
-Use database transactions when an operation must succeed or fail atomically.
-
-A service is especially appropriate when an operation involves:
-
-- Multiple models.
-- Multiple database writes.
-- External APIs.
-- Notifications.
-- Emails.
-- SMS or messaging.
-- Background jobs.
-- Transactions.
-- Several business rules.
-- Multi-step workflows.
-
-Do not create services merely to wrap trivial Active Record operations.
-
-For example, this generally does not require a service:
-
-```ruby
-User.find(params[:id])
-```
-
-Before creating a new abstraction, check whether an existing service or application pattern already solves the problem.
+- Thin controllers.
+- Thin models.
+- Business workflows in `app/services`.
+- Background jobs for work that does not need to complete in the request cycle.
+- Standard Rails functionality before custom abstractions.
+- Existing project abstractions before new abstractions.
 
 Do not introduce parallel architectural concepts such as:
 
@@ -333,79 +88,16 @@ unless the project already intentionally uses them for a separate purpose.
 
 ---
 
-## Rails conventions
+## Dependencies
 
-Prefer standard Rails functionality before introducing custom abstractions.
+Before adding a dependency:
 
-Prefer:
+1. Check whether Rails already provides the functionality.
+2. Check whether an existing dependency provides it.
+3. Prefer a small internal implementation when appropriate.
+4. Add a dependency only when it meaningfully reduces complexity or risk.
 
-- RESTful routes.
-- Conventional Rails controllers.
-- Active Record associations.
-- Active Record validations.
-- Active Record scopes.
-- Rails callbacks only for behavior that is truly lifecycle-dependent.
-- Active Job for background work.
-- Existing project abstractions over new abstractions.
-
-Avoid raw SQL unless Active Record would make the implementation significantly worse.
-
-Do not add gems unless they provide meaningful value and the functionality cannot reasonably be implemented with Rails or existing dependencies.
-
----
-
-## Background jobs
-
-Use background jobs for work that does not need to complete during the request cycle, including appropriate:
-
-- Emails.
-- Notifications.
-- External API calls.
-- Long-running processing.
-- Scheduled work.
-
-Keep business logic in services when possible and let jobs call those services.
-
-Prefer:
-
-```ruby
-class Appointments::SendReminderJob < ApplicationJob
-  def perform(appointment)
-    Appointments::SendReminder.new(appointment:).call
-  end
-end
-```
-
-instead of putting the entire workflow in the job.
-
----
-
-## Tests
-
-Add or update tests for behavior changed by the task.
-
-Follow the testing framework and patterns already used by the application.
-
-Test behavior rather than private implementation details.
-
-Services containing meaningful business logic should generally have corresponding tests.
-
-Run the most relevant tests while working.
-
-Before considering Ruby changes complete, run:
-
-```sh
-bin/rails test
-bin/rubocop
-```
-
-If the application has relevant system tests, also run:
-
-```sh
-bin/rails test:system
-```
-
-Do not fix unrelated existing test or RuboCop failures unless required for the requested task.
+Do not upgrade unrelated dependencies.
 
 ---
 
@@ -420,38 +112,11 @@ Never commit:
 - Passwords.
 - Production data.
 
-Use the project's existing secret-management mechanism, such as:
+Treat user-controlled input as untrusted.
 
-- Rails credentials.
-- Environment variables.
-- Secret-management services.
+Do not bypass Rails security protections for convenience.
 
-Treat all user-controlled input as untrusted.
-
-Use Rails protections and existing application patterns for:
-
-- Authentication.
-- Authorization.
-- CSRF protection.
-- Parameter filtering.
-- HTML escaping.
-- SQL injection prevention.
-- File uploads.
-
-Do not bypass security protections merely to simplify implementation.
-
----
-
-## Dependencies
-
-Before adding a new gem:
-
-1. Check whether Rails already provides the functionality.
-2. Check whether an existing dependency already provides it.
-3. Prefer a small internal implementation when appropriate.
-4. Add a new dependency only when it meaningfully reduces complexity or risk.
-
-Do not upgrade unrelated dependencies as part of an unrelated task.
+See `docs/security.md` for detailed security rules.
 
 ---
 
@@ -467,29 +132,27 @@ Prefer:
 - Clear naming.
 - Simple control flow.
 
-Avoid speculative abstractions.
+Avoid speculative abstractions and infrastructure for hypothetical future requirements.
 
-Do not create infrastructure for hypothetical future requirements unless the current task requires it.
-
-When modifying existing behavior, preserve public behavior unless the task explicitly requires changing it.
+Preserve existing public behavior unless the task explicitly requires changing it.
 
 ---
 
-## UI / Tailwind
+## Validation
 
-When creating or modifying HTML, ERB, ViewComponents, CSS, Tailwind classes,
-forms, navigation, or any other user-facing UI:
+Run the most relevant tests and checks for the files changed.
 
-**You MUST read and follow `docs/tailwind.md` before making UI changes.**
+For Ruby changes, normally run:
 
-`docs/tailwind.md` is the source of truth for:
+```sh
+bin/rubocop
+bin/rails test
+```
 
-- Tailwind conventions
-- light/dark theming
-- semantic colors
-- buttons and interaction states
-- component reuse
-- accessibility
-- UI consistency
+Run relevant system tests when changing user-facing behavior:
 
-Do not introduce UI conventions that conflict with that file.
+```sh
+bin/rails test:system
+```
+
+Do not fix unrelated existing failures unless required for the requested task.

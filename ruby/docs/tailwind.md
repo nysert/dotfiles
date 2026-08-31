@@ -1,36 +1,51 @@
 # Tailwind / UI Guidelines
 
-Read and follow this file whenever modifying HTML, ERB, ViewComponents, Tailwind, CSS, forms, navigation, or any user-facing UI.
+Use this file whenever creating or modifying:
+
+- HTML.
+- ERB templates.
+- ViewComponents.
+- Tailwind CSS.
+- CSS.
+- Forms.
+- Buttons.
+- Navigation.
+- Cards.
+- Modals.
+- Tables.
+- Responsive layouts.
+- Light/dark themes.
+- Any user-facing UI.
 
 Priority:
 
-1. Consistency
-2. Reuse
-3. Clarity
-4. Accessibility
-5. Themeability
-6. Polish
-7. Novelty
+1. Consistency.
+2. Reuse.
+3. Clarity.
+4. Accessibility.
+5. Themeability.
+6. Polish.
+7. Novelty.
 
 The UI should feel intentionally designed and premium without becoming visually noisy.
 
 ---
 
-## Tailwind First
+## Tailwind first
 
 Use Tailwind utilities whenever possible.
 
 Prefer Tailwind's default scales for:
 
-- colors
-- spacing
-- sizing
-- typography
-- border radius
-- shadows
-- opacity
-- breakpoints
-- transitions
+- Colors.
+- Spacing.
+- Sizing.
+- Typography.
+- Border radius.
+- Shadows.
+- Opacity.
+- Breakpoints.
+- Transitions.
 
 Prefer:
 
@@ -48,23 +63,23 @@ Avoid arbitrary values when a reasonable Tailwind default exists.
 
 ---
 
-## Reuse Before Creating
+## Reuse before creating
 
 Before creating a new UI pattern, search for an existing component or equivalent implementation.
 
 Reuse or extend existing:
 
-- buttons
-- inputs
-- selects
-- badges
-- cards
-- dialogs
-- dropdowns
-- alerts
-- tables
-- pagination
-- navigation
+- Buttons.
+- Inputs.
+- Selects.
+- Badges.
+- Cards.
+- Dialogs.
+- Dropdowns.
+- Alerts.
+- Tables.
+- Pagination.
+- Navigation.
 
 Do not recreate the same visual pattern independently in multiple places.
 
@@ -72,7 +87,7 @@ If the project already has a `Button`, `Input`, `Card`, etc., use it rather than
 
 ---
 
-## Keep Classes Clean
+## Keep classes clean
 
 Avoid duplicated, contradictory, or unnecessarily long class lists.
 
@@ -88,11 +103,11 @@ Do not create noisy diffs only to reorder classes.
 
 ---
 
-# Colors and Themes
+# Colors and themes
 
-## Never Inline Raw Colors
+## Never inline raw colors
 
-Raw color values must never appear in component/template markup.
+Raw color values must never appear in component or template markup.
 
 Forbidden:
 
@@ -107,11 +122,11 @@ style="color: #..."
 
 This prohibition applies to:
 
-- hex
-- rgb/rgba
-- hsl/hsla
-- oklch
-- any other literal color syntax
+- Hex.
+- `rgb()` / `rgba()`.
+- `hsl()` / `hsla()`.
+- `oklch()`.
+- Any other literal color syntax.
 
 **Raw colors belong only in the centralized theme/configuration layer.**
 
@@ -119,7 +134,7 @@ This keeps theme changes consistent and easy to make.
 
 ---
 
-## Color Selection Order
+## Color selection order
 
 Before adding a color:
 
@@ -132,7 +147,7 @@ Do not create custom colors for tiny shade differences when a standard Tailwind 
 
 ---
 
-## Custom Colors Must Be Centralized
+## Custom colors must be centralized
 
 If a custom color is genuinely needed, define it in the project's existing theme/config file, for example:
 
@@ -160,7 +175,7 @@ Bad:
 
 ---
 
-## Prefer Semantic Tokens
+## Prefer semantic tokens
 
 Custom theme colors should describe purpose, not literal appearance.
 
@@ -201,15 +216,15 @@ Components should describe what a color means, not which shade currently impleme
 
 ---
 
-## Light and Dark Mode
+## Light and dark mode
 
 Every new component must work correctly in both light and dark mode.
 
 Do not assume:
 
-- white backgrounds
-- black text
-- black borders
+- White backgrounds.
+- Black text.
+- Black borders.
 
 If semantic tokens already handle themes, prefer:
 
@@ -249,7 +264,7 @@ muted      dark:text-gray-400
 
 # Buttons
 
-## Buttons Must Feel Premium
+## Buttons must feel premium
 
 Do not default to flat controls such as:
 
@@ -265,24 +280,24 @@ or:
 
 Buttons should normally have:
 
-- semantic background color
-- related border color
-- appropriate foreground contrast
-- subtle shadow/depth
-- hover feedback
-- active/pressed feedback
-- visible keyboard focus
-- disabled state
-- theme support
-- restrained transitions
+- Semantic background color.
+- Related border color.
+- Appropriate foreground contrast.
+- Subtle shadow/depth.
+- Hover feedback.
+- Active/pressed feedback.
+- Visible keyboard focus.
+- Disabled state.
+- Theme support.
+- Restrained transitions.
 
-Premium should come from good hierarchy, spacing, typography, borders, shadows, and interaction states.
+Premium should come from hierarchy, spacing, typography, borders, shadows, and polished interaction states.
 
 Do **not** interpret premium as automatically adding gradients, glassmorphism, glow effects, or large shadows.
 
 ---
 
-## Primary / Success Buttons
+## Primary / success buttons
 
 Positive primary actions such as Save, Create, Continue, Confirm, Add, Submit, and Publish should use a clear success/primary treatment.
 
@@ -315,7 +330,7 @@ If semantic theme utilities exist, use those instead of hard-coding a Tailwind p
 
 ---
 
-## Secondary Buttons
+## Secondary buttons
 
 Secondary actions should still feel designed:
 
@@ -345,7 +360,7 @@ Avoid harsh black rectangular borders as the default secondary-button style.
 
 ---
 
-## Destructive Buttons
+## Destructive buttons
 
 Destructive actions should use the same polished treatment with danger semantics:
 
@@ -373,7 +388,7 @@ Destructive actions should use the same polished treatment with danger semantics
 
 ---
 
-## Ghost Buttons
+## Ghost buttons
 
 Ghost buttons are appropriate for low-priority, toolbar, compact, and icon actions.
 
@@ -383,7 +398,7 @@ Do not use ghost styling for every action.
 
 ---
 
-## Button Hierarchy
+## Button hierarchy
 
 Usually only one action in a group should visually dominate.
 
@@ -400,7 +415,7 @@ Avoid several equally prominent colored buttons next to each other.
 
 ---
 
-# Interaction Design
+# Interaction design
 
 ## Borders
 
@@ -479,7 +494,7 @@ Do not unexpectedly change semantic color on hover.
 
 ---
 
-## Active / Pressed
+## Active / pressed
 
 Prefer subtle tactile feedback:
 
@@ -564,7 +579,7 @@ When semantic theme utilities exist, prefer them.
 
 ---
 
-# Cards and Surfaces
+# Cards and surfaces
 
 Cards should rely on restrained contrast, borders, and shadows:
 
@@ -574,14 +589,14 @@ Cards should rely on restrained contrast, borders, and shadows:
 
 Avoid unnecessary:
 
-- heavy gradients
-- huge shadows
-- repeated nested borders
-- decorative effects without purpose
+- Heavy gradients.
+- Huge shadows.
+- Repeated nested borders.
+- Decorative effects without purpose.
 
 ---
 
-# Typography and Spacing
+# Typography and spacing
 
 Prefer Tailwind's standard type scale:
 
@@ -615,14 +630,14 @@ Consistency matters more than unnecessary pixel-level adjustments.
 
 ---
 
-# Arbitrary Values
+# Arbitrary values
 
 Arbitrary **layout** values are allowed only when:
 
-- implementing an externally specified design
-- exact geometry is genuinely necessary
-- integrating with a third-party component
-- no reasonable Tailwind token exists
+- Implementing an externally specified design.
+- Exact geometry is genuinely necessary.
+- Integrating with a third-party component.
+- No reasonable Tailwind token exists.
 
 Avoid unnecessary values like:
 
@@ -665,7 +680,7 @@ Prefer reusable components over ad-hoc CSS aliases for repeated utility lists.
 
 ---
 
-# Responsive Design
+# Responsive design
 
 Build mobile-first.
 
@@ -685,19 +700,19 @@ Avoid unnecessary breakpoint proliferation.
 
 Always preserve:
 
-- semantic HTML
-- keyboard navigation
-- visible focus states
-- sufficient contrast
-- readable disabled states
-- form labels
-- appropriate `aria-*` attributes where necessary
+- Semantic HTML.
+- Keyboard navigation.
+- Visible focus states.
+- Sufficient contrast.
+- Readable disabled states.
+- Form labels.
+- Appropriate `aria-*` attributes where necessary.
 
 Do not communicate important state using color alone.
 
 ---
 
-# Completion Checklist
+# Completion checklist
 
 Before considering UI work complete, verify:
 
@@ -717,7 +732,7 @@ Before considering UI work complete, verify:
 - [ ] Custom CSS and arbitrary values were avoided unless necessary.
 - [ ] The UI feels like one consistent design system.
 
-## Core Rule
+## Core rule
 
 **Theme colors are configuration, not component implementation details.**
 
