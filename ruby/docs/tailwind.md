@@ -50,13 +50,13 @@ Prefer Tailwind's default scales for:
 Prefer:
 
 ```html
-<div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+<div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"></div>
 ```
 
 over:
 
 ```html
-<div class="rounded-[11px] border-[#e3e3e3] bg-[#fff] p-[23px]">
+<div class="rounded-[11px] border-[#e3e3e3] bg-[#fff] p-[23px]"></div>
 ```
 
 Avoid arbitrary values when a reasonable Tailwind default exists.
@@ -164,13 +164,13 @@ Do not create a second theme system if one already exists.
 Good:
 
 ```html
-<button class="bg-success text-success-foreground">
+<button class="bg-success text-success-foreground"></button>
 ```
 
 Bad:
 
 ```html
-<button class="bg-[#16a34a] text-white">
+<button class="bg-[#16a34a] text-white"></button>
 ```
 
 ---
@@ -229,13 +229,15 @@ Do not assume:
 If semantic tokens already handle themes, prefer:
 
 ```html
-<div class="border-border bg-surface text-foreground">
+<div class="border-border bg-surface text-foreground"></div>
 ```
 
 If the project uses `dark:` directly, use theme-safe Tailwind classes:
 
 ```html
-<div class="border-gray-200 bg-white text-gray-950 dark:border-white/10 dark:bg-gray-950 dark:text-white">
+<div
+  class="border-gray-200 bg-white text-gray-950 dark:border-white/10 dark:bg-gray-950 dark:text-white"
+></div>
 ```
 
 Do not simply invert colors. Both themes should look intentional.
@@ -264,122 +266,140 @@ muted      dark:text-gray-400
 
 # Buttons
 
-## Buttons must feel premium
+## Shared button geometry
 
-Do not default to flat controls such as:
+Buttons should align visually with single-line form controls without looking like form fields.
 
-```html
-<button class="border border-black px-4 py-2">
+Default application buttons should normally use:
+
+```text
+h-10
+inline-flex items-center justify-center
+rounded-md
+px-4
+text-sm font-medium
+shadow-sm
+transition
 ```
 
-or:
+This gives buttons the same height and radius as inputs/selects while preserving a distinct button treatment through background, typography, and interaction states.
 
-```html
-<button class="bg-black px-4 py-2 text-white">
-```
+Use compact buttons such as `h-8 px-3 text-xs` only for intentionally compact controls such as table actions, toolbar actions, or small `Add` buttons.
 
-Buttons should normally have:
-
-- Semantic background color.
-- Related border color.
-- Appropriate foreground contrast.
-- Subtle shadow/depth.
-- Hover feedback.
-- Active/pressed feedback.
-- Visible keyboard focus.
-- Disabled state.
-- Theme support.
-- Restrained transitions.
-
-Premium should come from hierarchy, spacing, typography, borders, shadows, and polished interaction states.
-
-Do **not** interpret premium as automatically adding gradients, glassmorphism, glow effects, or large shadows.
+Do not let ordinary page actions drift into different heights because one uses `py-2`, another uses `py-1.5`, and another relies on browser defaults.
 
 ---
 
-## Primary / success buttons
+## Buttons use shadow, not borders
 
-Positive primary actions such as Save, Create, Continue, Confirm, Add, Submit, and Publish should use a clear success/primary treatment.
+Normal buttons should **not** use borders for visual structure.
 
-If no semantic project palette exists, an emerald Tailwind treatment is a reasonable default:
+Prefer:
+
+- Background contrast.
+- `shadow-sm` at rest.
+- A stronger hover background.
+- `hover:shadow-md` where appropriate.
+- Subtle pressed feedback.
+- A visible focus ring.
+
+Avoid:
+
+```text
+border
+border-gray-300
+border-blue-700
+border-red-700
+```
+
+on normal primary, secondary, and destructive buttons.
+
+Borders remain appropriate for form controls, cards, dividers, and other surfaces.
+
+Ghost/icon buttons are intentionally flatter and may omit shadows when their lower visual priority is clear.
+
+---
+
+## Primary buttons
+
+The primary action in a page or action group should normally use the application's primary color.
+
+If no semantic project palette exists, blue is a reasonable default:
 
 ```html
 <button
   class="
-    inline-flex items-center justify-center gap-2
-    rounded-lg border border-emerald-700
-    bg-emerald-600 px-4 py-2
-    text-sm font-semibold text-white
+    inline-flex h-10 items-center justify-center gap-2
+    rounded-md bg-blue-600 px-4
+    text-sm font-medium text-white
     shadow-sm transition
-    hover:bg-emerald-500 hover:shadow-md
+    hover:bg-blue-700 hover:shadow-md
     active:translate-y-px active:shadow-sm
     focus-visible:outline-none
-    focus-visible:ring-2 focus-visible:ring-emerald-500/40
+    focus-visible:ring-2 focus-visible:ring-blue-500/40
     disabled:pointer-events-none disabled:opacity-50
-    dark:border-emerald-400/30
-    dark:bg-emerald-500
-    dark:text-emerald-950
-    dark:hover:bg-emerald-400
+    dark:bg-blue-500 dark:hover:bg-blue-400
   "
 >
-  Save changes
+  Save destination
 </button>
 ```
 
-If semantic theme utilities exist, use those instead of hard-coding a Tailwind palette into every component.
+If semantic theme utilities exist, prefer them over hard-coding a Tailwind palette into every component.
+
+Do not use success/green styling merely because an action saves or creates something. Reserve success styling for actions or states whose semantics are genuinely success-oriented.
 
 ---
 
 ## Secondary buttons
 
-Secondary actions should still feel designed:
+Secondary actions should remain clearly visible against both the page background and card surfaces.
+
+A good default is:
 
 ```html
 <button
   class="
-    inline-flex items-center justify-center gap-2
-    rounded-lg border border-gray-300
-    bg-white px-4 py-2
-    text-sm font-medium text-gray-700
+    inline-flex h-10 items-center justify-center gap-2
+    rounded-md bg-white px-4
+    text-sm font-medium text-slate-700
     shadow-sm transition
-    hover:bg-gray-50 hover:text-gray-950 hover:shadow
-    active:translate-y-px
+    hover:bg-slate-100 hover:text-slate-950 hover:shadow-md
+    active:translate-y-px active:shadow-sm
     focus-visible:outline-none
-    focus-visible:ring-2 focus-visible:ring-gray-400/30
+    focus-visible:ring-2 focus-visible:ring-slate-400/30
     disabled:pointer-events-none disabled:opacity-50
-    dark:border-white/10
-    dark:bg-white/5 dark:text-gray-200
-    dark:hover:bg-white/10 dark:hover:text-white
+    dark:bg-white/10 dark:text-slate-200
+    dark:hover:bg-white/15 dark:hover:text-white
   "
 >
   Cancel
 </button>
 ```
 
-Avoid harsh black rectangular borders as the default secondary-button style.
+The hover state must remain distinct from the page behind the button.
+
+For example, if the page uses `bg-slate-50`, avoid `hover:bg-slate-50` on a white secondary button because the control can visually disappear into the page. Prefer a stronger contrast change such as `hover:bg-slate-100`, optionally combined with `hover:shadow-md`.
 
 ---
 
 ## Destructive buttons
 
-Destructive actions should use the same polished treatment with danger semantics:
+Destructive actions should use the same geometry and shadow treatment with danger semantics:
 
 ```html
 <button
   class="
-    inline-flex items-center justify-center gap-2
-    rounded-lg border border-red-700
-    bg-red-600 px-4 py-2
-    text-sm font-semibold text-white
+    inline-flex h-10 items-center justify-center gap-2
+    rounded-md bg-red-600 px-4
+    text-sm font-medium text-white
     shadow-sm transition
-    hover:bg-red-500 hover:shadow-md
+    hover:bg-red-700 hover:shadow-md
     active:translate-y-px active:shadow-sm
     focus-visible:outline-none
     focus-visible:ring-2 focus-visible:ring-red-500/40
     disabled:pointer-events-none disabled:opacity-50
-    dark:border-red-400/30
-    dark:bg-red-500
-    dark:hover:bg-red-400
+    dark:bg-red-500 dark:hover:bg-red-400
   "
 >
   Delete
@@ -392,9 +412,11 @@ Destructive actions should use the same polished treatment with danger semantics
 
 Ghost buttons are appropriate for low-priority, toolbar, compact, and icon actions.
 
-They still require hover and focus feedback.
+They may intentionally omit the default button shadow when a flatter treatment better communicates lower priority.
 
-Do not use ghost styling for every action.
+They still require hover, active, focus, and disabled states.
+
+Do not use ghost styling for ordinary page-level actions such as Save, Cancel, Create, or Delete.
 
 ---
 
@@ -405,10 +427,10 @@ Usually only one action in a group should visually dominate.
 Typical hierarchy:
 
 ```text
-Save changes → primary/success
-Cancel       → secondary
-Delete       → destructive
-More         → ghost
+Save / Create / Continue → primary
+Cancel                   → secondary
+Delete                   → destructive
+More / icon action       → ghost
 ```
 
 Avoid several equally prominent colored buttons next to each other.
@@ -421,34 +443,44 @@ Avoid several equally prominent colored buttons next to each other.
 
 Avoid harsh pure-black borders unless explicitly required.
 
-Prefer subtle contextual borders such as:
+Prefer subtle contextual borders for fields and surfaces such as:
 
 ```text
-border-gray-200
-border-gray-300
+border-slate-200
+border-slate-300
 dark:border-white/10
 ```
 
-Colored controls should generally use a border related to their semantic color.
+Use borders for:
+
+- Inputs and selects.
+- Textareas.
+- Cards and surfaces.
+- Dividers.
+- Tables where structure needs them.
+
+Do **not** use borders on normal buttons. Buttons should get separation from background contrast, shadows, and interaction states instead.
 
 ---
 
 ## Shadows
 
-Use shadows deliberately:
+Use shadows deliberately and consistently:
 
 ```text
-shadow-sm → controls, buttons, cards
+shadow-sm → inputs, selects, normal buttons, cards
 shadow    → slightly elevated surfaces
-shadow-md → hover/elevated state
+shadow-md → button hover, menus, more elevated states
 shadow-lg → dialogs, dropdowns, floating surfaces
 ```
 
-Useful tactile pattern:
+Default tactile button pattern:
 
 ```text
 shadow-sm hover:shadow-md active:shadow-sm
 ```
+
+Inputs and selects normally keep a stable `shadow-sm`; focus should be communicated by border/ring changes rather than by making the field float dramatically.
 
 Do not make every surface float.
 
@@ -456,24 +488,18 @@ Do not make every surface float.
 
 ## Radius
 
-Prefer the standard Tailwind radius scale:
+Use one default radius for application controls.
+
+Recommended default:
 
 ```text
-rounded-md
-rounded-lg
-rounded-xl
-rounded-2xl
-rounded-full
+inputs/selects/buttons → rounded-md
+cards                  → rounded-xl
+badges                  → rounded-md or rounded-full
+dialogs                 → rounded-xl or rounded-2xl
 ```
 
-Typical defaults:
-
-```text
-buttons/inputs → rounded-lg
-cards          → rounded-xl
-badges         → rounded-md or rounded-full
-dialogs        → rounded-xl or rounded-2xl
-```
+Do not mix `rounded-md`, `rounded-lg`, and custom radii across otherwise equivalent fields and buttons without a deliberate reason.
 
 ---
 
@@ -486,9 +512,20 @@ Use restrained changes such as:
 ```text
 hover:bg-*
 hover:text-*
-hover:border-*
 hover:shadow-*
 ```
+
+The hover state must remain visually distinct from the surface behind the control.
+
+Example:
+
+```text
+page:              bg-slate-50
+secondary button:  bg-white
+button hover:      hover:bg-slate-100 hover:shadow-md
+```
+
+Avoid a hover color that matches the page background and makes the control visually disappear.
 
 Do not unexpectedly change semantic color on hover.
 
@@ -551,31 +588,157 @@ Routine UI feedback should feel immediate.
 
 # Forms
 
-Inputs must work well in both themes and have clear focus states.
+## One visual system for single-line controls
 
-A typical style is:
+All single-line form controls must share the same geometry and base styling.
+
+This applies to:
+
+- Text inputs.
+- Email inputs.
+- URL inputs.
+- Password inputs.
+- Number inputs.
+- Date/time inputs when practical.
+- Selects.
+- Combobox triggers.
+- Other input-like single-line controls.
+
+The default control contract is:
+
+```text
+h-10
+w-full
+rounded-md
+border border-slate-300
+bg-white
+px-3
+text-sm
+shadow-sm
+outline-none
+transition
+```
+
+Do not rely on browser-default height, padding, border, or shadow.
+
+Do not create a field with only a layout class such as:
+
+```html
+<input class="w-full" />
+```
+
+when neighboring fields use the standard field styling.
+
+That is a common cause of one generated input looking visibly different from the rest of the form.
+
+---
+
+## Canonical single-line input
+
+A typical input style is:
 
 ```html
 <input
   class="
-    w-full rounded-lg
-    border border-gray-300
-    bg-white px-3 py-2
-    text-sm text-gray-950
+    h-10 w-full rounded-md
+    border border-slate-300
+    bg-white px-3
+    text-sm text-slate-950
     shadow-sm outline-none transition
-    placeholder:text-gray-400
-    focus:border-emerald-500
-    focus:ring-2 focus:ring-emerald-500/20
+    placeholder:text-slate-400
+    focus:border-blue-500
+    focus:ring-2 focus:ring-blue-500/20
+    disabled:cursor-not-allowed
+    disabled:bg-slate-50 disabled:text-slate-500
     dark:border-white/10
     dark:bg-white/5 dark:text-white
-    dark:placeholder:text-gray-500
-    dark:focus:border-emerald-400
-    dark:focus:ring-emerald-400/20
+    dark:placeholder:text-slate-500
+    dark:focus:border-blue-400
+    dark:focus:ring-blue-400/20
   "
->
+/>
 ```
 
 When semantic theme utilities exist, prefer them.
+
+---
+
+## Selects must match inputs
+
+A select placed beside an input must have the same height, radius, border, shadow, typography, and focus treatment.
+
+Example:
+
+```html
+<select
+  class="
+    h-10 w-full rounded-md
+    border border-slate-300
+    bg-white px-3
+    text-sm text-slate-950
+    shadow-sm outline-none transition
+    focus:border-blue-500
+    focus:ring-2 focus:ring-blue-500/20
+    disabled:cursor-not-allowed
+    disabled:bg-slate-50 disabled:text-slate-500
+    dark:border-white/10
+    dark:bg-white/5 dark:text-white
+    dark:focus:border-blue-400
+    dark:focus:ring-blue-400/20
+  "
+></select>
+```
+
+Avoid styling one field with `py-2`, another with `py-1.5`, and another with browser defaults. Explicit `h-10` makes single-line controls predictable across input types and browsers.
+
+---
+
+## Textareas and multi-line controls
+
+Textareas should reuse the same:
+
+- Border.
+- Radius.
+- Background.
+- Text.
+- Shadow.
+- Placeholder.
+- Focus treatment.
+
+They should **not** use the fixed single-line `h-10` height.
+
+Use a sensible minimum height such as `min-h-24` and vertical padding such as `py-2`.
+
+---
+
+## Labels and field spacing
+
+Use consistent field structure:
+
+```html
+<label class="block">
+  <span class="text-sm font-medium text-slate-700">Endpoint URL</span>
+  <input class="mt-1 ..." />
+</label>
+```
+
+Equivalent fields in the same form should use the same label typography and label-to-control spacing.
+
+For horizontally paired controls, preserve the same control height:
+
+```html
+<div class="grid gap-4 sm:grid-cols-2">...</div>
+```
+
+---
+
+## Reuse the field primitive
+
+When the same control class list appears repeatedly, centralize it through the project's existing UI abstraction such as a form builder, helper, partial, or component.
+
+Generated UI code should search for and reuse the canonical field primitive before writing a new class list.
+
+Consistency is more important than inventing a slightly different field style for a new page.
 
 ---
 
@@ -584,7 +747,9 @@ When semantic theme utilities exist, prefer them.
 Cards should rely on restrained contrast, borders, and shadows:
 
 ```html
-<div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-gray-900">
+<div
+  class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-gray-900"
+></div>
 ```
 
 Avoid unnecessary:
@@ -687,7 +852,7 @@ Build mobile-first.
 Prefer progressive breakpoints:
 
 ```html
-<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
 ```
 
 Avoid separate mobile/desktop markup when responsive utilities are sufficient.
@@ -725,7 +890,12 @@ Before considering UI work complete, verify:
 - [ ] Light mode looks intentional.
 - [ ] Dark mode looks intentional.
 - [ ] Theme changes remain easy to make centrally.
-- [ ] Buttons have clear hierarchy and premium interaction states.
+- [ ] All equivalent single-line inputs/selects use the same height, radius, border, shadow, typography, and focus treatment.
+- [ ] No ordinary field relies on browser-default sizing/styling or only a layout class such as `w-full`.
+- [ ] Buttons align to the shared control height where appropriate.
+- [ ] Normal buttons use shadow/background contrast instead of borders.
+- [ ] Secondary-button hover states remain distinct from the page/card background.
+- [ ] Buttons have clear hierarchy and polished interaction states.
 - [ ] Hover, active, focus, and disabled states exist where appropriate.
 - [ ] Keyboard focus remains visible.
 - [ ] Spacing and typography use Tailwind's standard scales.
