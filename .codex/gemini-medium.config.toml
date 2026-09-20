@@ -1,0 +1,5 @@
+model_provider = "litellm"
+model = "gemini-3.8-flash"
+model_reasoning_effort = "medium"
+
+review_model = "gemini-3.8-flash"

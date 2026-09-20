@@ -7,3 +7,6 @@
 - Install ripgrep `brew install ripgrep`
 - Install node `brew install node`
 - Install vim plugins `vim .` -> `:PluginInstall`
+- Install uv `brew install uv`
+- Install litellm `uv tool install 'litellm[proxy]'`
+- [Install mise](https://mise.jdx.dev/)

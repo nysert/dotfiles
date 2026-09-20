@@ -1,0 +1,17 @@
+model = "gpt-5.6-terra"
+model_reasoning_effort = "medium"
+
+review_model = "gpt-5.6-sol"
+
+[model_providers.litellm]
+name = "Local LiteLLM"
+base_url = "http://127.0.0.1:4040/v1"
+wire_api = "responses"
+supports_websockets = false
+
+[model_providers.deepseek]
+name = "DeepSeek"
+base_url = "https://api.deepseek.com"
+env_key = "DEEPSEEK_API_KEY"
+wire_api = "responses"
+supports_websockets = false

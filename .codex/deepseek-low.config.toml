@@ -1,0 +1,9 @@
+model_provider = "deepseek"
+model = "deepseek-flash"
+
+model_reasoning_effort = "low"
+web_search = "disabled"
+
+model_catalog_json = "~/.codex/deepseek-models.json"
+
+review_model = "deepseek-flash"

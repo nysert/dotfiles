@@ -110,6 +110,8 @@ zstyle :prompt:pure:git:unpushed:commits color blue
 prompt pure
 
 alias rgrep="rg"
+alias vim="nvim"
 
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
+[[ -f "$HOME/.config/zsh/codex.zsh" ]] && source "$HOME/.config/zsh/codex.zsh"
+
+eval "$(mise activate zsh)"
