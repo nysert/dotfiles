@@ -1,0 +1,6 @@
+require("config.ui")
+require("config.tools")
+require("config.completion")
+require("config.formatting")
+require("config.linting")
+require("config.lsp")
