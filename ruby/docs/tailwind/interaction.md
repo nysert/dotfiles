@@ -19,11 +19,14 @@ Use borders for:
 
 - Inputs and selects.
 - Textareas.
+- Secondary buttons when they intentionally mirror input-like controls.
 - Cards and surfaces.
 - Dividers.
 - Tables where structure needs them.
 
-Do **not** use borders on normal buttons. Buttons should get separation from background contrast, shadows, and interaction states instead.
+Primary and destructive buttons should normally get separation from background contrast, shadows, and interaction states rather than borders.
+
+Secondary buttons are the exception: prefer the same subtle input border treatment, typically `border border-slate-300 bg-white` in light mode and the equivalent input border/surface tokens in dark mode.
 
 ---
 ## Shadows
@@ -82,7 +85,7 @@ Example:
 
 ```text
 page:              bg-slate-50
-secondary button:  bg-white
+secondary button:  border border-slate-300 bg-white
 button hover:      hover:bg-slate-100 hover:shadow-md
 ```
 

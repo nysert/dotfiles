@@ -5,7 +5,7 @@ Detailed guidance referenced by `docs/tailwind.md`. Read this file only when thi
 # Buttons
 ## Shared button geometry
 
-Buttons should align visually with single-line form controls without looking like form fields.
+Buttons should align visually with single-line form controls. Primary and destructive buttons should remain visually distinct from form fields, while secondary buttons may intentionally borrow the input surface and border treatment.
 
 Default application buttons should normally use:
 
@@ -26,11 +26,11 @@ Use compact buttons such as `h-8 px-3 text-xs` only for intentionally compact co
 Do not let ordinary page actions drift into different heights because one uses `py-2`, another uses `py-1.5`, and another relies on browser defaults.
 
 ---
-## Buttons use shadow, not borders
+## Border treatment by button type
 
-Normal buttons should **not** use borders for visual structure.
+Primary and destructive buttons should normally get visual structure from background contrast and shadows rather than borders.
 
-Prefer:
+Prefer for those buttons:
 
 - Background contrast.
 - `shadow-sm` at rest.
@@ -39,20 +39,11 @@ Prefer:
 - Subtle pressed feedback.
 - A visible focus ring.
 
-Avoid:
+Avoid adding decorative palette borders such as `border-blue-700` or `border-red-700` to primary or destructive buttons.
 
-```text
-border
-border-gray-300
-border-blue-700
-border-red-700
-```
+Secondary buttons are the deliberate exception: they should look like input-adjacent controls, using a white surface and the same subtle border width/color family as inputs. A typical light-mode treatment is `border border-slate-300 bg-white`; in dark mode, use the same border/surface tokens as dark inputs, such as `dark:border-white/10 dark:bg-white/5`.
 
-on normal primary, secondary, and destructive buttons.
-
-Borders remain appropriate for form controls, cards, dividers, and other surfaces.
-
-Ghost/icon buttons are intentionally flatter and may omit shadows when their lower visual priority is clear.
+Ghost/icon buttons are intentionally flatter and may omit borders and shadows when their lower visual priority is clear.
 
 ---
 ## Primary buttons
@@ -71,6 +62,18 @@ Do not use success/green styling merely because an action saves or creates somet
 ## Secondary buttons
 
 Secondary actions should remain clearly visible against both the page background and card surfaces.
+
+Secondary buttons should visually relate to inputs rather than appearing as borderless white rectangles. When a project exposes a `btn-secondary` primitive, its default surface should normally match the input contract:
+
+```text
+h-10
+rounded-md
+border border-slate-300
+bg-white
+shadow-sm
+```
+
+Use the same border width and border color family as neighboring inputs/selects. Do not make the secondary-button border darker or thicker merely to make it feel more button-like.
 
 A good default is:
 

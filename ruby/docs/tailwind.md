@@ -24,7 +24,7 @@ The UI should feel intentionally designed and premium without becoming visually 
 - Prefer semantic color tokens.
 - Every new component must work intentionally in light and dark mode.
 - Equivalent controls must share consistent geometry and interaction states.
-- Normal buttons use background contrast/shadows rather than borders.
+- Primary and destructive buttons use background contrast/shadows rather than borders; secondary buttons should use an input-like white surface with the same subtle border width and color family as form controls.
 - Preserve visible focus, keyboard access, semantic HTML, sufficient contrast, and readable disabled states.
 - Avoid custom CSS unless Tailwind, an existing component, or a theme token cannot express the requirement clearly.
 

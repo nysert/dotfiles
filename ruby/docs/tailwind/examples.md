@@ -33,16 +33,18 @@ Source topic: `buttons.md`
 <button
   class="
     inline-flex h-10 items-center justify-center gap-2
-    rounded-md bg-white px-4
+    rounded-md border border-slate-300 bg-white px-4
     text-sm font-medium text-slate-700
     shadow-sm transition
     hover:bg-slate-100 hover:text-slate-950 hover:shadow-md
     active:translate-y-px active:shadow-sm
-    focus-visible:outline-none
-    focus-visible:ring-2 focus-visible:ring-slate-400/30
+    focus-visible:border-blue-500 focus-visible:outline-none
+    focus-visible:ring-2 focus-visible:ring-blue-500/20
     disabled:pointer-events-none disabled:opacity-50
-    dark:bg-white/10 dark:text-slate-200
-    dark:hover:bg-white/15 dark:hover:text-white
+    dark:border-white/10 dark:bg-white/5 dark:text-slate-200
+    dark:hover:bg-white/10 dark:hover:text-white
+    dark:focus-visible:border-blue-400
+    dark:focus-visible:ring-blue-400/20
   "
 >
   Cancel
