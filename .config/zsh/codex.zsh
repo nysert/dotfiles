@@ -117,6 +117,14 @@ litellm-status() {
 # Codex / OpenAI
 # -----------------------------------------------------------------------------
 
+codex-6sol-medium() {
+  codex --profile 6sol-medium "$@"
+}
+
+codex-6sol-high() {
+  codex --profile 6sol-high "$@"
+}
+
 codex-terra-medium() {
   codex --profile terra-medium "$@"
 }
