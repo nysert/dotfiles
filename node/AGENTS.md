@@ -22,7 +22,7 @@ Do not migrate JavaScript to TypeScript, CommonJS to ESM, package managers, test
 
 Project guidance uses progressive disclosure:
 
-1. Read every applicable **top-level** `docs/*.md` file before making changes.
+1. Read every applicable **top-level** `docs/agents/*.md` file before making changes.
 2. From those files, read every **nested topical** document that governs the specific behavior being changed.
 3. Prefer existing project code over generic examples when both satisfy the documented rules.
 
@@ -32,26 +32,26 @@ Do not recursively load an entire documentation tree merely because files are li
 
 A top-level document is mandatory when the task creates, changes, removes, reviews, or debugs behavior in its scope:
 
-- Any Node.js, JavaScript, or TypeScript code → `docs/node.md`
-- HTTP handlers/controllers, services, jobs, or business/application workflows → `docs/architecture.md`
-- Persistence, migrations, SQL, indexes, constraints, queries, transactions, locking, or data migrations → `docs/database.md`
-- Browser code, client/server boundaries, forms, DOM behavior, or interactive UI → `docs/frontend.md`
-- Third-party APIs, providers, SDKs, webhooks, or external services → `docs/integrations.md`
-- Public API endpoints/contracts, schemas, responses, errors, versioning, pagination, or OpenAPI → `docs/openapi.md`
-- Environment variables, runtime configuration, workers, queues, scheduled work, or deployment-sensitive behavior → `docs/operations.md`
-- Logging, error reporting, metrics, tracing, or observability providers → `docs/observability.md`
-- Any application behavior change that should be verified by tests → `docs/testing.md`
-- Authentication, authorization, secrets, user-controlled input, uploads, external data, or sensitive data → `docs/security.md`
+- Any Node.js, JavaScript, or TypeScript code → `docs/agents/node.md`
+- HTTP handlers/controllers, services, jobs, or business/application workflows → `docs/agents/architecture.md`
+- Persistence, migrations, SQL, indexes, constraints, queries, transactions, locking, or data migrations → `docs/agents/database.md`
+- Browser code, client/server boundaries, forms, DOM behavior, or interactive UI → `docs/agents/frontend.md`
+- Third-party APIs, providers, SDKs, webhooks, or external services → `docs/agents/integrations.md`
+- Public API endpoints/contracts, schemas, responses, errors, versioning, pagination, or OpenAPI → `docs/agents/openapi.md`
+- Environment variables, runtime configuration, workers, queues, scheduled work, or deployment-sensitive behavior → `docs/agents/operations.md`
+- Logging, error reporting, metrics, tracing, or observability providers → `docs/agents/observability.md`
+- Any application behavior change that should be verified by tests → `docs/agents/testing.md`
+- Authentication, authorization, secrets, user-controlled input, uploads, external data, or sensitive data → `docs/agents/security.md`
 
 A task may require several top-level documents. Read all that apply.
 
 Common combinations:
 
-- Node workflow with persistence → `docs/node.md` + `docs/architecture.md` + `docs/database.md` + `docs/testing.md`
-- External integration → `docs/integrations.md` + `docs/security.md` + `docs/testing.md`
-- Public API endpoint → `docs/openapi.md` + `docs/node.md` + relevant architecture/database/security/testing docs
-- Background or recurring workflow → `docs/architecture.md` + `docs/operations.md` + `docs/testing.md`
-- Browser-facing behavior → `docs/frontend.md` + `docs/security.md` + `docs/testing.md`
+- Node workflow with persistence → `docs/agents/node.md` + `docs/agents/architecture.md` + `docs/agents/database.md` + `docs/agents/testing.md`
+- External integration → `docs/agents/integrations.md` + `docs/agents/security.md` + `docs/agents/testing.md`
+- Public API endpoint → `docs/agents/openapi.md` + `docs/agents/node.md` + relevant architecture/database/security/testing docs
+- Background or recurring workflow → `docs/agents/architecture.md` + `docs/agents/operations.md` + `docs/agents/testing.md`
+- Browser-facing behavior → `docs/agents/frontend.md` + `docs/agents/security.md` + `docs/agents/testing.md`
 
 ### Nested topical routing
 

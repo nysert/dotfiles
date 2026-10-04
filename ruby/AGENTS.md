@@ -20,7 +20,7 @@ Preserve existing public behavior unless the task explicitly requires changing i
 
 Project guidance uses progressive disclosure:
 
-1. Read every applicable **top-level** `docs/*.md` file before making changes.
+1. Read every applicable **top-level** `docs/agents/*.md` file before making changes.
 2. From those files, read every **nested topical** document that governs the specific behavior being changed.
 3. Read **example** files only when a concrete example is useful for the current implementation; examples are not default context.
 
@@ -30,31 +30,31 @@ Do not recursively load an entire documentation tree merely because files are li
 
 A top-level document is mandatory when the task creates, changes, removes, reviews, or debugs behavior in its scope:
 
-- Any Ruby code → `docs/ruby.md`
-- Controllers, models, services, jobs, or business/application workflows → `docs/architecture.md`
-- Persistence, migrations, PostgreSQL, indexes, constraints, queries, transactions, locking, or data migrations → `docs/database.md`
-- ERB, HTML, Turbo, Stimulus, JavaScript, forms, DOM/browser behavior, or interactive UI → `docs/frontend.md`
-- Tailwind, CSS, themes, colors, component appearance, layout, or other visual UI → `docs/tailwind.md`
-- Third-party APIs, providers, SDKs, webhooks, or external services → `docs/integrations.md`
-- Public API endpoints/contracts, schemas, responses, errors, versioning, pagination, or OpenAPI/Swagger → `docs/openapi.md`
-- Rails credentials, runtime configuration, Solid Queue, background execution, recurring jobs, cron, or deployment-sensitive behavior → `docs/operations.md`
-- Logging, error reporting, metrics, tracing, or observability providers → `docs/observability.md`
-- Any application behavior change that should be verified by tests → `docs/testing.md`
-- Authentication, authorization, secrets, user-controlled input, uploads, external data, or sensitive data → `docs/security.md`
+- Any Ruby code → `docs/agents/ruby.md`
+- Controllers, models, services, jobs, or business/application workflows → `docs/agents/architecture.md`
+- Persistence, migrations, PostgreSQL, indexes, constraints, queries, transactions, locking, or data migrations → `docs/agents/database.md`
+- ERB, HTML, Turbo, Stimulus, JavaScript, forms, DOM/browser behavior, or interactive UI → `docs/agents/frontend.md`
+- Tailwind, CSS, themes, colors, component appearance, layout, or other visual UI → `docs/agents/tailwind.md`
+- Third-party APIs, providers, SDKs, webhooks, or external services → `docs/agents/integrations.md`
+- Public API endpoints/contracts, schemas, responses, errors, versioning, pagination, or OpenAPI/Swagger → `docs/agents/openapi.md`
+- Rails credentials, runtime configuration, Solid Queue, background execution, recurring jobs, cron, or deployment-sensitive behavior → `docs/agents/operations.md`
+- Logging, error reporting, metrics, tracing, or observability providers → `docs/agents/observability.md`
+- Any application behavior change that should be verified by tests → `docs/agents/testing.md`
+- Authentication, authorization, secrets, user-controlled input, uploads, external data, or sensitive data → `docs/agents/security.md`
 
 A task may require several top-level documents. Read all that apply; do not choose only the most obvious one.
 
 Common combinations:
 
-- UI behavior + styling → `docs/frontend.md` + `docs/tailwind.md`
-- Ruby workflow with persistence → `docs/ruby.md` + `docs/architecture.md` + `docs/database.md` + `docs/testing.md`
-- External integration → `docs/integrations.md` + `docs/security.md` + `docs/testing.md`; also read operations/observability when the change affects retries, jobs, configuration, logging, metrics, or tracing
-- Public API endpoint → `docs/openapi.md` + `docs/ruby.md` + relevant architecture/database/security/testing docs
-- Background or recurring workflow → `docs/architecture.md` + `docs/operations.md` + `docs/testing.md`; add integrations/database/security when those concerns are involved
+- UI behavior + styling → `docs/agents/frontend.md` + `docs/agents/tailwind.md`
+- Ruby workflow with persistence → `docs/agents/ruby.md` + `docs/agents/architecture.md` + `docs/agents/database.md` + `docs/agents/testing.md`
+- External integration → `docs/agents/integrations.md` + `docs/agents/security.md` + `docs/agents/testing.md`; also read operations/observability when the change affects retries, jobs, configuration, logging, metrics, or tracing
+- Public API endpoint → `docs/agents/openapi.md` + `docs/agents/ruby.md` + relevant architecture/database/security/testing docs
+- Background or recurring workflow → `docs/agents/architecture.md` + `docs/agents/operations.md` + `docs/agents/testing.md`; add integrations/database/security when those concerns are involved
 
 ### Nested topical routing
 
-Top-level documents contain a `Read when relevant` section that maps narrower concerns to nested files such as `docs/<area>/<topic>.md`.
+Top-level documents contain a `Read when relevant` section that maps narrower concerns to nested files such as `docs/agents/<area>/<topic>.md`.
 
 A linked nested topical file is **mandatory** when any of the following is true:
 
@@ -70,9 +70,9 @@ Do not read unrelated sibling topic files for completeness.
 
 Examples:
 
-- Creating or changing a Stimulus controller → `docs/frontend.md` + `docs/frontend/stimulus.md`; add `docs/tailwind.md` only if visual styling changes.
-- Adding an index → `docs/database.md` + the nested database topic covering indexes/queries; do not load data-migration guidance unless data movement is also required.
-- Changing API validation errors → `docs/openapi.md` + the nested responses/errors topic; read schema/type guidance only if the schema contract also changes.
+- Creating or changing a Stimulus controller → `docs/agents/frontend.md` + `docs/agents/frontend/stimulus.md`; add `docs/agents/tailwind.md` only if visual styling changes.
+- Adding an index → `docs/agents/database.md` + the nested database topic covering indexes/queries; do not load data-migration guidance unless data movement is also required.
+- Changing API validation errors → `docs/agents/openapi.md` + the nested responses/errors topic; read schema/type guidance only if the schema contract also changes.
 - Adding a provider webhook processed in a background job → integration webhook/reliability topics + applicable operations/job, security, architecture, and testing guidance.
 
 ### Example files
