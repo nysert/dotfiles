@@ -15,3 +15,29 @@ base_url = "https://api.deepseek.com"
 env_key = "DEEPSEEK_API_KEY"
 wire_api = "responses"
 supports_websockets = false
+
+[desktop]
+appearanceTheme = "dark"
+preventSleepWhileRunning = true
+keepRemoteControlAwakeWhilePluggedIn = true
+followUpQueueMode = "queue"
+dock-icon-preference = "app-default"
+conversationDetailMode = "STEPS_PROSE"
+appearanceDarkCodeThemeId = "lobster"
+
+[desktop.appearanceDarkChromeTheme]
+accent = "#ff0000"
+accentSource = "custom"
+contrast = 72
+ink = "#e4e4e7"
+opaqueWindows = true
+surface = "#111827"
+
+[desktop.appearanceDarkChromeTheme.fonts]
+code = '"Jetbrains Mono"'
+ui = "Satoshi"
+
+[desktop.appearanceDarkChromeTheme.semanticColors]
+diffAdded = "#22c55e"
+diffRemoved = "#ff5c5c"
+skill = "#3b82f6"
