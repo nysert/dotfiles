@@ -18,9 +18,8 @@ Read for module organization, HTTP/CLI handlers, jobs, application workflows, or
 
 ## Framework compatibility
 
-Respect the framework's generated files and routing conventions while keeping domain logic in reusable modules. A Loco.rs project may retain `controllers/`, `models/`, `workers/`, and `tasks/`, and add domain modules alongside them—without introducing `services/`.
+Respect a framework's generated files, modules, and routing conventions while keeping reusable application logic in cohesive domain or capability modules. Introduce additional layers only where they add meaningful value.
 
 ## Read when relevant
 
 - Workflow composition, dependencies, retries, and side-effect ordering → `docs/agents/architecture/workflows.md`
-- Loco.rs conventions and a module-first example → `docs/agents/architecture/loco.md`
