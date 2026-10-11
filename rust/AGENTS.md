@@ -62,6 +62,14 @@ Never commit secrets, credentials, tokens, private keys, or production data. Tre
 
 ---
 
+## Grafana Cloud observability
+
+For slow HTTP requests, SQL, async tasks, and cross-service errors, prefer **Grafana Cloud Explore → Tempo** (trace waterfalls) and **Explore → Loki** (logs) when connected. Read `docs/agents/observability.md` and the project's runbook. Rust `tracing` spans do **not** automatically ship stdout logs or export OpenTelemetry spans without configuration.
+
+Default to plain Grafana Cloud Free signals; **do not enable host-billed Application Observability or Database Observability** without explicit approval. Never claim live Grafana access without actual evidence.
+
+---
+
 ## Validation
 
 Start with focused checks. For a typical Cargo workspace without a stronger existing contract:

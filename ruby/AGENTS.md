@@ -128,6 +128,14 @@ Do not bypass security protections for convenience.
 
 ---
 
+## Grafana Cloud observability
+
+For slow Rails requests, SQL, jobs, and errors, prefer **Grafana Cloud Explore → Tempo** (trace waterfalls) and **Explore → Loki** (logs) when connected. Follow `docs/agents/observability.md` and the project's runbook. OpenTelemetry tracing does **not** ship Rails/Docker logs automatically; logging needs a separate ingestion path.
+
+Default to plain Grafana Cloud Free signals; **do not enable host-billed Application Observability or Database Observability** unless explicitly requested. Never claim to have inspected live Grafana data without access and actual evidence.
+
+---
+
 ## Validation
 
 Run the narrowest relevant tests and checks while working.
