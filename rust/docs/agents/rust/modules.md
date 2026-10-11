@@ -3,6 +3,8 @@
 Read when adding or changing crates, modules, traits, feature flags, or exported types.
 
 - Preserve workspace and module naming conventions.
+- Prefer module-first organization by domain or capability (for example `products/`, `matching/`, or `parser/`), not mandatory layer directories like `services/`.
+- Start with a single module for small features; split into related submodules when size or responsibilities warrant it.
 - Organize modules around cohesive capabilities, not catch-all `utils` buckets.
 - Default items to private and expose only the contract needed by callers.
 - Prefer functions and concrete types until polymorphism clearly benefits the design.

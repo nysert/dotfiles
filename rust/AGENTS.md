@@ -4,7 +4,7 @@
 
 This is a Rust application or library.
 
-Follow the repository's Cargo workspace, crate boundaries, Rust edition, toolchain, and existing conventions unless project instructions say otherwise.
+Follow the repository's Cargo workspace, crate boundaries, Rust edition, toolchain, and existing conventions unless project instructions say otherwise. Prefer a **module-first architecture** organized by domain or capability for new code; a `services/` directory is not required. Keep framework entry points thin and delegate reusable behavior to focused domain modules.
 
 Keep changes focused. Preserve existing public behavior unless a change is requested. Before introducing a dependency, crate, abstraction, or directory, look for an existing equivalent. Prefer simple, idiomatic Rust over speculative abstractions.
 
@@ -23,7 +23,7 @@ Use progressive disclosure:
 ### Top-level routing
 
 - Any Rust code, type, trait, ownership, error, or async change → `docs/agents/rust.md`
-- HTTP/CLI handlers, services, domain flows, jobs, or crate architecture → `docs/agents/architecture.md`
+- HTTP/CLI handlers, module organization, domain workflows, jobs, or application architecture → `docs/agents/architecture.md` (also read its Loco.rs guidance when relevant)
 - Database, SQL, migrations, queries, transactions, locking → `docs/agents/database.md`
 - Browser/WASM behavior, forms, interactive UI, client/server boundary → `docs/agents/frontend.md`
 - Provider APIs, SDKs, webhooks, external calls → `docs/agents/integrations.md`
