@@ -105,6 +105,14 @@ Do not bypass authentication, authorization, validation, escaping, CSRF/origin p
 
 ---
 
+## Grafana Cloud observability
+
+For slow HTTP calls, database operations, workers, and errors, prefer **Grafana Cloud Explore → Tempo** (trace waterfalls) and **Explore → Loki** (logs) when connected. Read `docs/agents/observability.md` and the project's runbook. Node OpenTelemetry traces do **not** ship console/Docker logs automatically; configure log collection separately.
+
+Default to plain Grafana Cloud Free signals; **do not enable host-billed Application Observability or Database Observability** without explicit approval. Do not invent live Grafana results when access is unavailable.
+
+---
+
 ## Validation
 
 Use the scripts defined in `package.json` rather than invoking globally installed project tooling.
