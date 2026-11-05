@@ -37,6 +37,7 @@ A top-level document is mandatory when the task creates, changes, removes, revie
 - Persistence, migrations, SQL, indexes, constraints, queries, transactions, locking, or data migrations → `docs/agents/database.md`
 - Browser code, client/server boundaries, forms, DOM behavior, or interactive UI → `docs/agents/frontend.md`
 - HTML source formatting and template markup conventions (ERB, Tera, Jinja, EJS, etc.) → `docs/agents/html.md`
+- Tailwind, CSS, themes, colors, styling, responsive layouts and visual UI → `docs/agents/tailwind.md`
 - Third-party APIs, providers, SDKs, webhooks, or external services → `docs/agents/integrations.md`
 - Public API endpoints/contracts, schemas, responses, errors, versioning, pagination, or OpenAPI → `docs/agents/openapi.md`
 - Environment variables, runtime configuration, workers, queues, scheduled work, or deployment-sensitive behavior → `docs/agents/operations.md`
