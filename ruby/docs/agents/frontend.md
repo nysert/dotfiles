@@ -3,6 +3,7 @@
 Use this file when creating or modifying browser-side behavior, HTML structure, ERB, Turbo, Stimulus, JavaScript, forms, or interactive UI.
 
 For visual styling, themes, colors, and Tailwind conventions, also read `docs/agents/tailwind.md`.
+For HTML/ERB source formatting, indentation, and template markup layout, also read `docs/agents/html.md`.
 
 The frontend should remain Rails-first, server-driven, and progressively enhanced unless an existing area intentionally uses a different approach.
 
@@ -24,6 +25,7 @@ New Stimulus controllers must be created with `bin/rails generate stimulus NAME`
 
 ## Read when relevant
 
+- HTML/ERB source layout, template indentation and attribute wrapping → `docs/agents/html.md`
 - Rails-first UI, semantic HTML, ERB, and Turbo → `docs/agents/frontend/rails-hotwire.md`
 - Stimulus creation, manifests, identifiers, targets, and examples → `docs/agents/frontend/stimulus.md`
 - Browser state, forms, DOM IDs/events, accessibility, progressive enhancement, and performance → `docs/agents/frontend/browser-behavior.md`

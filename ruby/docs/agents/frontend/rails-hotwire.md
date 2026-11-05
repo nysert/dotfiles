@@ -41,6 +41,8 @@ Add ARIA only when native HTML cannot express the behavior.
 ---
 ## ERB
 
+For HTML/ERB source formatting and template indentation, read `docs/agents/html.md`.
+
 Keep templates focused on presentation.
 
 Avoid substantial business logic in ERB.

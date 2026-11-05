@@ -3,6 +3,7 @@
 Use this file for visual UI work: Tailwind/CSS, themes, colors, forms, buttons, navigation, cards, modals, tables, responsive layouts, and other user-facing styling.
 
 For browser behavior and HTML/ERB/Turbo/Stimulus conventions, also read `docs/agents/frontend.md`.
+For HTML/ERB source markup formatting and template indentation, also read `docs/agents/html.md`.
 
 ## Priorities
 
