@@ -26,6 +26,7 @@ Use progressive disclosure:
 - HTTP/CLI handlers, module organization, domain workflows, jobs, or application architecture → `docs/agents/architecture.md` (also read its Loco.rs guidance when relevant)
 - Database, SQL, migrations, queries, transactions, locking → `docs/agents/database.md`
 - Browser/WASM behavior, forms, interactive UI, client/server boundary → `docs/agents/frontend.md`
+- HTML source formatting and template markup conventions (ERB, Tera, Jinja, EJS, etc.) → `docs/agents/html.md`
 - Provider APIs, SDKs, webhooks, external calls → `docs/agents/integrations.md`
 - Public HTTP contracts, schemas, errors, pagination, OpenAPI → `docs/agents/openapi.md`
 - Environment config, runtimes, workers, queues, deployments → `docs/agents/operations.md`

@@ -4,6 +4,8 @@ Use this file when Node.js work includes browser code, client/server boundaries,
 
 Follow the frontend framework and component patterns already used by the project.
 
+For HTML and server-rendered template markup, read `docs/agents/html.md` for indentation, compact tags and attribute wrapping. Framework-specific formatters remain authoritative.
+
 ## Core rules
 
 - Keep secrets, private credentials, and server-only dependencies out of browser bundles.

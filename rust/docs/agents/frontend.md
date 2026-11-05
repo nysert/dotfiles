@@ -2,6 +2,8 @@
 
 Read for Rust UI components, browser/WASM behavior, forms, or client/server boundaries.
 
+For HTML and server-rendered markup templates (including Tera), read `docs/agents/html.md` for source formatting, nesting and template-branch indentation.
+
 - Follow the existing UI framework and patterns (e.g. Leptos, Yew, or Dioxus); do not migrate frameworks incidentally.
 - Keep components focused and move complex domain behavior into testable functions.
 - Handle loading, error, empty, and success states explicitly.
