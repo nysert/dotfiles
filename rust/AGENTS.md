@@ -4,7 +4,11 @@
 
 This is a Rust application or library.
 
-Follow the repository's Cargo workspace, crate boundaries, Rust edition, toolchain, and existing conventions unless project instructions say otherwise. Prefer a **module-first architecture** organized by domain or capability for new code; a `services/` directory is not required. Keep framework entry points thin and delegate reusable behavior to focused domain modules.
+Follow the repository's Cargo workspace, crate boundaries, Rust edition, toolchain, and existing conventions unless project instructions say otherwise.
+
+Put non-trivial application workflows in `src/services/<domain>/<action>.rs` in the application crate. Use plural domain names where appropriate and action-oriented filenames. Give each independent action its own module and place application-side integrations inside their owning service domains. Keep framework entry points thin. Keep new, unrelated responsibilities out of existing modules, including oversized ones.
+
+Reusable libraries may organize modules by domain or capability. Every handwritten production Rust module must follow the cohesion and complexity rules.
 
 Keep changes focused. Preserve existing public behavior unless a change is requested. Before introducing a dependency, crate, abstraction, or directory, look for an existing equivalent. Prefer simple, idiomatic Rust over speculative abstractions.
 
@@ -23,7 +27,7 @@ Use progressive disclosure:
 ### Top-level routing
 
 - Any Rust code, type, trait, ownership, error, or async change → `docs/agents/rust.md`
-- HTTP/CLI handlers, module organization, domain workflows, jobs, or application architecture → `docs/agents/architecture.md` (also read its Loco.rs guidance when relevant)
+- HTTP/CLI handlers, module organization, domain workflows, jobs, or application architecture → `docs/agents/architecture.md`
 - Database, SQL, migrations, queries, transactions, locking → `docs/agents/database.md`
 - Browser/WASM behavior, forms, interactive UI, client/server boundary → `docs/agents/frontend.md`
 - HTML source formatting and template markup conventions (ERB, Tera, Jinja, EJS, etc.) → `docs/agents/html.md`
@@ -39,7 +43,7 @@ Read **all** applicable documents. For example, a persisted background workflow 
 
 ### Nested routing
 
-Top-level documents identify optional narrower guidance under `docs/agents/<area>/`. Read each linked file whose topic, design choices, or completion requirements apply. Do not read unrelated siblings.
+Top-level documents identify narrower guidance under `docs/agents/<area>/`. Read each linked file whose topic, design choices, or completion requirements apply. Creating, modifying, reviewing, or decomposing handwritten production Rust modules requires `docs/agents/rust/complexity.md`. Do not read unrelated siblings.
 
 ### Authority
 
@@ -78,8 +82,9 @@ Start with focused checks. For a typical Cargo workspace without a stronger exis
 
 ```sh
 cargo fmt --all -- --check
-cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
 ```
+
+Run the Clippy check with the complexity lints specified in [Rust conventions](docs/agents/rust.md#completion).
 
 Run the supported toolchain, features, targets, and integration tests defined by the project. Use `--all-features` only when the combination is supported. `cargo fmt --all` mutates files; run non-mutating checks before completion. Report tests that could not run, and do not modify unrelated code to silence pre-existing failures.
