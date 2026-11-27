@@ -8,6 +8,8 @@ Follow the repository's Cargo workspace, crate boundaries, Rust edition, toolcha
 
 Put non-trivial application workflows in `src/services/<domain>/<action>.rs` in the application crate. Use plural domain names where appropriate and action-oriented filenames. Give each independent action its own module and place application-side integrations inside their owning service domains. Keep framework entry points thin. Keep new, unrelated responsibilities out of existing modules, including oversized ones.
 
+Follow the adopting repository's layout for the rest of each package. Consult [Application and Library Architecture](docs/agents/architecture.md#migration-scope) to determine the scope of a migration.
+
 Reusable libraries may organize modules by domain or capability. Every handwritten production Rust module must follow the cohesion and complexity rules.
 
 Keep changes focused. Preserve existing public behavior unless a change is requested. Before introducing a dependency, crate, abstraction, or directory, look for an existing equivalent. Prefer simple, idiomatic Rust over speculative abstractions.

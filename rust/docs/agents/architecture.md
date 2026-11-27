@@ -20,11 +20,19 @@ Read for module organization, entry points, jobs, application workflows, or boun
 | `workers/` | Background execution |
 | `middleware/` | Request-level infrastructure |
 | `config/` | Runtime configuration |
-| `mcp/` | MCP transport and tool entry points |
+| `mcp/` (for example, `src/mcp`) | Separate MCP transport package and tool entry points; a consolidated layout can use `src/services/mcp` |
 
 Create directories as their responsibilities arise. Preserve framework-required files, routing, generated modules, and existing ORM conventions. The same service layout applies across web and RPC frameworks, ORM and database libraries, MCP, CLI applications, and background workers.
 
 Reserve application workflows and their provider implementations for the service layer. Do not introduce equivalent top-level layers under `src/commands/`, `src/use_cases/`, `src/interactors/`, `src/operations/`, `src/integrations/`, `src/clients/`, `src/adapters/`, or `src/gateways/`. Framework-required directories with distinct responsibilities, such as CLI command definitions or deployment operations, are exempt. Migrate legacy directories only when the task calls for it.
+
+## Migration scope
+
+A workflow migration moves the application action implementation into its owning service domain and updates its callers. Shared types, protocol entry points, and support code can remain in their existing packages when the repository's layout gives them a separate home.
+
+An entire-package migration relocates the in-scope implementation, support modules, tests, and resources as appropriate. Update internal imports, resource paths, and documentation, then remove the original source directory. Preserve existing public imports with re-exports at the crate boundary where compatibility is required.
+
+An adopting repository can document a consolidated layout that puts application-owned domain and integration packages under `src/services`, including their contracts, adapters, and support code. Keep required framework entry points, ORM models, and generated modules in their established locations unless the project specifies a supported alternative. MCP transport can stay in a separate `src/mcp` package or live at `src/services/mcp` in a consolidated layout. In either location, handlers validate input, delegate application actions, and translate results.
 
 ## Libraries
 

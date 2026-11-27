@@ -44,6 +44,8 @@ Callers import `crate::services::users` and call `users::create(&db, input).awai
 
 Keep action-specific inputs, outputs, errors, and helpers with their action. Extract shared behavior and types only when multiple consumers genuinely need them. Name shared modules for their responsibility and avoid catch-all files such as `utils.rs`, `helpers.rs`, `common.rs`, `manager.rs`, or `processor.rs`.
 
+For example, moving an OAuth workflow can put token exchange at `src/services/oauth/exchange_token.rs` while leaving protocol support in its documented location. Moving the whole package brings that support into `src/services/oauth/`, removes `src/oauth/`, and can preserve the crate's existing public `oauth` import through a re-export in `src/lib.rs`. Follow the [migration scope rule](../architecture.md#migration-scope) for each request.
+
 ## Decompose complex actions by responsibility
 
 When an action develops distinct internal responsibilities, promote its file to a directory:
