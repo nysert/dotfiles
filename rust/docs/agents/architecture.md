@@ -1,25 +1,38 @@
-# Application Architecture
+# Application and Library Architecture
 
-Read for module organization, HTTP/CLI handlers, jobs, application workflows, or boundaries.
+Read for module organization, entry points, jobs, application workflows, or boundaries.
 
-## Default: module-first
+## Applications
 
-- **Organize new Rust code into cohesive modules by domain or capability**, such as `products/`, `matching/`, `parser/`, or `storage/`; avoid forcing every project into an architectural layer structure.
-- Keep entry points (`main.rs`, HTTP handlers, CLI commands, workers, scheduled tasks) thin: validate boundary input, call reusable modules, and translate results or errors.
-- Put non-trivial workflows in focused functions/modules within the domain they serve (e.g. `products/create.rs`). Prefer functions and explicit data types over unnecessary service structs and traits.
-- Keep domain invariants and intrinsic behavior close to their owning types/modules. Separate infrastructure and external side effects when it improves clarity or testing.
-- **Do not require a `services/` directory.** Add a separate service/repository layer only where it clarifies real boundaries or matches an established project convention.
-- Use meaningful domain/capability names instead of generic `Manager` or `Helper` scaffolding.
-- Preserve existing crate and module conventions; start with small modules and split them as behavior grows, not in anticipation.
-- Use database transactions for atomic persistence; handle external side effects separately.
-- Delegate background job entry points to shared domain workflows.
-- Introduce traits at genuine abstraction boundaries where polymorphism or substitution is useful.
-- Choose sync or async based on actual I/O and concurrency needs.
+- Put every non-trivial application workflow in `src/services/<domain>/<action>.rs` in the appropriate application crate. Each service module owns one cohesive business action. Applications without application workflows can omit `services/`.
+- Keep controllers, workers, MCP tools, CLI handlers, and scheduled tasks thin. Validate boundary inputs, call services, and translate results and errors at the entry point.
+- Give services framework-independent interfaces with explicit dependencies. Choose sync or async based on the actual I/O and concurrency needs.
+- Keep intrinsic behavior and domain invariants close to the types that own them. Use explicit transaction boundaries for atomic persistence and plan external side effects separately.
+- Keep application-side integrations inside their owning service domains. Add repositories only where persistence or query complexity warrants them.
 
-## Framework compatibility
+| Location | Responsibility |
+| --- | --- |
+| `services/` | Application workflows and external integrations |
+| `models/` | Domain models and intrinsic behavior |
+| `entities/` | ORM entities, where appropriate |
+| `repositories/` | Optional persistence and query abstraction |
+| `controllers/` or `handlers/` | HTTP or framework entry points |
+| `workers/` | Background execution |
+| `middleware/` | Request-level infrastructure |
+| `config/` | Runtime configuration |
+| `mcp/` | MCP transport and tool entry points |
 
-Respect a framework's generated files, modules, and routing conventions while keeping reusable application logic in cohesive domain or capability modules. Introduce additional layers only where they add meaningful value.
+Create directories as their responsibilities arise. Preserve framework-required files, routing, generated modules, and existing ORM conventions. The same service layout applies across web and RPC frameworks, ORM and database libraries, MCP, CLI applications, and background workers.
+
+Reserve application workflows and their provider implementations for the service layer. Do not introduce equivalent top-level layers under `src/commands/`, `src/use_cases/`, `src/interactors/`, `src/operations/`, `src/integrations/`, `src/clients/`, `src/adapters/`, or `src/gateways/`. Framework-required directories with distinct responsibilities, such as CLI command definitions or deployment operations, are exempt. Migrate legacy directories only when the task calls for it.
+
+## Libraries
+
+Reusable libraries, SDKs, parsers, algorithms, and infrastructure crates may organize by domain or capability without a service directory. Apply the same rules for cohesion, visibility, and complexity to their production modules.
 
 ## Read when relevant
 
-- Workflow composition, dependencies, retries, and side-effect ordering → `docs/agents/architecture/workflows.md`
+- Application service paths, naming, visibility, and decomposition → `docs/agents/architecture/services.md`
+- Workflow composition, dependencies, transactions, retries, and side effects → `docs/agents/architecture/workflows.md`
+- Module and function size, responsibility review, and decomposition → `docs/agents/rust/complexity.md`
+- External integration boundaries and reliability → `docs/agents/integrations.md`

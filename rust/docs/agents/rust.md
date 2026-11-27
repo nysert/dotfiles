@@ -5,6 +5,7 @@ Read this when creating or changing Rust code. Follow the project's edition, too
 ## Core rules
 
 - Write readable Rust with clear ownership boundaries, cohesive types, and small focused functions.
+- Keep independent responsibilities in separate modules and review module and function complexity when adding or materially modifying handwritten production code.
 - Prefer enums for closed states and newtypes when they prevent confusing unrelated identifiers.
 - Borrow for short-lived access; use owned data when ownership simplifies a genuine lifetime boundary. Do not clone merely to placate the borrow checker.
 - Use `Result` for recoverable failures and `Option` for legitimate absence; retain useful error context.
@@ -17,8 +18,19 @@ Read this when creating or changing Rust code. Follow the project's edition, too
 
 - Ownership, borrowing, failures, and panics → `docs/agents/rust/ownership-errors.md`
 - Modules, crates, traits, and public APIs → `docs/agents/rust/modules.md`
+- File length, function complexity, module decomposition, and complexity enforcement → `docs/agents/rust/complexity.md` (required for handwritten production module changes and reviews)
 - Async, concurrency, cancellation, and blocking → `docs/agents/rust/async.md`
 
 ## Completion
 
-Follow existing CI. Common checks are `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, and `cargo test --workspace`, with the project's supported targets and features.
+Follow existing CI and use the project's supported targets and feature combinations. Common checks are `cargo fmt --all -- --check`, `cargo test --workspace`, and Clippy with the complexity lints enabled. Reuse existing workspace lint levels when they already enable these lints. Otherwise, run:
+
+```sh
+cargo clippy --workspace --all-targets -- \
+  -D warnings \
+  -W clippy::too_many_lines \
+  -W clippy::cognitive_complexity \
+  -W clippy::too_many_arguments
+```
+
+The Clippy configuration supplies thresholds. Enable the individual lints through workspace configuration or the command above. See [complexity review](rust/complexity.md) for manual checks and narrowly scoped exceptions.
